@@ -11,16 +11,11 @@ public class ModuloEjecucion extends Modulo {
 
     @Override
     public void procesarEntrada(Consulta consulta) {
-
+        // TODO
     }
 
     @Override
-    public void procesarSalida(Consulta consulta) {
-
-    }
-
-    @Override
-    public void procesarTimeout(Consulta consulta) {
-
+    protected void generarSalida(Consulta consulta) {
+        // TODO
     }
 }

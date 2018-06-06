@@ -3,9 +3,9 @@ package Dominio.Modulos;
 import Dominio.Consulta;
 import Simulacion.Simulacion;
 
-public class ModuloAdministracionProcesos extends Modulo {
+public class ModuloProcesamiento extends Modulo {
 
-    public ModuloAdministracionProcesos(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
+    public ModuloProcesamiento(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         super(simulacion, siguienteModulo, numeroServidores);
     }
 

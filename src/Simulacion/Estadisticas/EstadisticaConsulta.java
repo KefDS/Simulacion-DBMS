@@ -8,12 +8,12 @@ public class EstadisticaConsulta {
         this.tiempoInicial = tiempoInicial;
     }
 
-    public double getTiempoInicial() {
-        return tiempoInicial;
+    public double getTiempoDeVida(double tiempo) {
+        return tiempo - tiempoInicial;
     }
 
-    public double getTiempoLlegadaModulo() {
-        return tiempoLlegadaModulo;
+    public double getTiempoDesdeLlegadaModulo(double tiempo) {
+        return tiempo - tiempoLlegadaModulo;
     }
 
     public void setTiempoLlegadaModulo(double tiempoLlegadaModulo) {

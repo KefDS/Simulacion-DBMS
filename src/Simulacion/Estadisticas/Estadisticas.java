@@ -20,7 +20,7 @@ public class Estadisticas {
     }
 
     public void anadirTiempoConsultaFinalizada(double tiempo) {
-        // TODO
+        promedioVidaConexion.anadirTiempoAcumulado(tiempo);
     }
 
     public void anadirConexionDescartada() {

@@ -5,16 +5,18 @@ import Simulacion.PromedioTiempo;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EstadisticasModulo {
     private PromedioTiempo promedioTiempoEnCola;
-    private Map<TipoConsulta, PromedioTiempo> promedioColaPorTipoSentencia;
+    private Map<TipoConsulta, PromedioTiempo> promedioTiempoPorTipoSentencia;
 
     public EstadisticasModulo() {
         promedioTiempoEnCola = new PromedioTiempo();
-        promedioColaPorTipoSentencia = new EnumMap<>(TipoConsulta.class);
-        // TODO: Revisar
-        promedioColaPorTipoSentencia.entrySet().forEach(entry -> entry.setValue(new PromedioTiempo()));
+        promedioTiempoPorTipoSentencia = new EnumMap<>(TipoConsulta.class);
+        Stream.of(TipoConsulta.values()).forEach(tipoConsulta ->
+                promedioTiempoPorTipoSentencia.put(tipoConsulta, new PromedioTiempo()));
     }
 
     public void anadirTiempoClienteEnCola(double tiempo) {
@@ -22,7 +24,7 @@ public class EstadisticasModulo {
     }
 
     public void anadirTiempoServicio(TipoConsulta tipo, double tiempo) {
-        promedioColaPorTipoSentencia.get(tipo).anadirTiempoAcumulado(tiempo);
+        promedioTiempoPorTipoSentencia.get(tipo).anadirTiempoAcumulado(tiempo);
     }
 
     public double sacarTiempoPromedioCola() {
@@ -30,9 +32,9 @@ public class EstadisticasModulo {
     }
 
     public Map<TipoConsulta, Double> sacarTiempoServicioTipoConsulta() {
-        EnumMap<TipoConsulta, Double> tablaTiempos = new EnumMap<>(TipoConsulta.class);
-        promedioColaPorTipoSentencia.entrySet().forEach(entry ->
-                tablaTiempos.put(entry.getKey(), entry.getValue().getPromedio()));
-        return tablaTiempos;
+        return promedioTiempoPorTipoSentencia.entrySet().stream().collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> entry.getValue().getPromedio()
+        ));
     }
 }

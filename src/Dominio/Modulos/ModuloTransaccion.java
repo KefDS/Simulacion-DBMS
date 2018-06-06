@@ -1,6 +1,7 @@
 package Dominio.Modulos;
 
 import Dominio.Consulta;
+import Dominio.Enumeraciones.TipoConsulta;
 import Simulacion.Simulacion;
 
 public class ModuloTransaccion extends Modulo {
@@ -9,20 +10,22 @@ public class ModuloTransaccion extends Modulo {
 
     public ModuloTransaccion(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         super(simulacion, siguienteModulo, numeroServidores);
+        prioridadDDL = false;
     }
 
     @Override
     public void procesarEntrada(Consulta consulta) {
-
+        // TODO
     }
 
     @Override
-    public void procesarSalida(Consulta consulta) {
-
+    protected Consulta getSiguienteConsulta() {
+        // TODO
+        return new Consulta(null, TipoConsulta.SELECT, 0);
     }
 
     @Override
-    public void procesarTimeout(Consulta consulta) {
-
+    protected void generarSalida(Consulta consulta) {
+        // TODO
     }
 }
