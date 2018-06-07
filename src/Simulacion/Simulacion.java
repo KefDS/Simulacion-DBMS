@@ -55,10 +55,14 @@ public class Simulacion {
                         break;
                 }
             }
+            if (modoLento) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-
-
-        // TODO
     }
 
     private void inicializadorModulos(int conexionesMaximas, int timeout, int servidoresProcesamiento, int servidoresTransaccion, int servidoresEjecuccion) {
