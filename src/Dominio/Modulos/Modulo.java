@@ -1,20 +1,22 @@
 package Dominio.Modulos;
 
 import Dominio.Consulta;
+import Simulacion.ControladorSimulacion;
+import Simulacion.Enumeraciones.TipoEvento;
 import Simulacion.Estadisticas.EstadisticasModulo;
-import Simulacion.Simulacion;
+import Simulacion.Evento;
 
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 public abstract class Modulo {
-    protected final Simulacion simulacion;
+    protected final ControladorSimulacion simulacion;
     protected final Queue<Consulta> colaConsultas;
     protected Modulo siguienteModulo;
     protected int numeroServidores;
     protected EstadisticasModulo estadisticasModulo;
 
-    public Modulo(Simulacion simulacion, int numeroServidores) {
+    public Modulo(ControladorSimulacion simulacion, int numeroServidores) {
         this.simulacion = simulacion;
         this.numeroServidores = numeroServidores;
 
@@ -22,37 +24,59 @@ public abstract class Modulo {
         colaConsultas = new PriorityQueue<>();
     }
 
-    public Modulo(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
+    public Modulo(ControladorSimulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         this(simulacion, numeroServidores);
         this.siguienteModulo = siguienteModulo;
     }
 
-    public abstract void procesarEntrada(Consulta consulta);
+    public void procesarEntrada(Consulta consulta) {
+        consulta.getEstadisticaConsulta().setTiempoLlegadaModulo(simulacion.getReloj());
+        // Servidores disponibles?
+        if (numeroServidores > 0) {
+            numeroServidores--;
+            generarSalida(consulta);
+        } else {
+            colaConsultas.add(consulta);
+        }
+    }
 
     public void procesarSalida(Consulta consulta) {
         // Anade tiempo de servicio
         estadisticasModulo.anadirTiempoServicio(consulta.getTipoConsulta(),
                 consulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
 
-        if (consulta.isTimeout()) {
-            terminarConsulta(consulta);
-        } else {
-            siguienteModulo.procesarEntrada(consulta);
-        }
+        revisarTimeout(consulta);
 
         // Hay clientes esperando?
         Consulta siguienteConsulta = getSiguienteConsulta();
         if (siguienteConsulta != null) {
             estadisticasModulo.anadirTiempoClienteEnCola(
                     siguienteConsulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
-
             generarSalida(siguienteConsulta);
         } else {
             numeroServidores++;
         }
     }
 
-    protected abstract void generarSalida(Consulta consulta);
+    protected void revisarTimeout(Consulta consulta) {
+        if (consulta.isTimeout()) {
+            terminarConsulta(consulta);
+        } else {
+            siguienteModulo.procesarEntrada(consulta);
+        }
+    }
+
+    protected void generarSalida(Consulta consulta) {
+        double tiempo = getTiempoSalida(consulta);
+        simulacion.anadirEvento(new Evento(
+                simulacion.getReloj() + tiempo,
+                this,
+                TipoEvento.SALIDA,
+                consulta
+        ));
+    }
+
+    protected abstract double getTiempoSalida(Consulta consulta);
 
     protected Consulta getSiguienteConsulta() {
         return colaConsultas.poll();
@@ -63,6 +87,7 @@ public abstract class Modulo {
         if ((colaConsultas.remove(consulta))) {
             terminarConsulta(consulta);
         } else {
+            // Cuando sea procesada la salida, se sacara del sistema
             consulta.seVencioTimeout();
         }
     }

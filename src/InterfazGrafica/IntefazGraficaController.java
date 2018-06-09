@@ -1,6 +1,7 @@
 package InterfazGrafica;
 
 import InterfazGrafica.bibliotecas.IntegerStringConverter;
+import Simulacion.ControladorSimulacion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -57,7 +58,15 @@ public class IntefazGraficaController implements Initializable {
         empezarSimulacionButton.setText("Corriendo simulacion...");
         empezarSimulacionButton.setDisable(true);
         listaSpinners.stream().forEach(item -> item.setDisable(true));
-        System.out.println("Comming soon");
-        System.out.println("Numero de ejecucciones: " + numeroEjecucciones.getValue());
+
+        ControladorSimulacion simulacion = new ControladorSimulacion();
+        simulacion.iniciarSimulacion(numeroEjecucciones.getValue(),
+                duracionSegSpinner.getValue(),
+                modoLentoCheckbox.isSelected(),
+                conexionesMaximasSpinner.getValue(),
+                timeoutSpinner.getValue(),
+                servidoresProcesamientoSpinner.getValue(),
+                servidoresTransaccionesSpinner.getValue(),
+                servidoresEjecuccionSpinner.getValue());
     }
 }

@@ -10,14 +10,14 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-public class Simulacion {
+public class ControladorSimulacion {
     // TODO: GUI
     private double reloj;
     private Queue<Evento> colaEventos;
     private Map<TipoMudulo, Modulo> modulos;
     private Estadisticas estadisticas;
 
-    public Simulacion() {
+    public ControladorSimulacion() {
         reloj = 0;
         colaEventos = new PriorityQueue<Evento>();
         estadisticas = new Estadisticas();
@@ -36,10 +36,10 @@ public class Simulacion {
                 servidoresProcesamiento, servidoresTransaccion, servidoresEjecuccion);
 
         for (int i = 0; i < veces; i++) {
-            long limiteTiempo = System.currentTimeMillis() + tiempoTotal * 1000;
-            ((ModuloClientes) modulos.get(TipoMudulo.CLIENTES)).generarPrimerEvento();
+            long limiteTiempo = System.currentTimeMillis() + (tiempoTotal * 1000);
+            ((ModuloClientes) modulos.get(TipoMudulo.CLIENTES)).generarEntrada();
 
-            while (System.currentTimeMillis() < limiteTiempo) {
+            while (true /*System.currentTimeMillis() < limiteTiempo*/) {
                 Evento eventoActual = colaEventos.poll();
                 reloj = eventoActual.getTiempoEvento();
 
@@ -54,12 +54,13 @@ public class Simulacion {
                         eventoActual.getConsulta().getModuloActual().procesarTimeout(eventoActual.getConsulta());
                         break;
                 }
-            }
-            if (modoLento) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+                if (modoLento) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

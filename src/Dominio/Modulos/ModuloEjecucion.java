@@ -1,11 +1,11 @@
 package Dominio.Modulos;
 
 import Dominio.Consulta;
-import Simulacion.Simulacion;
+import Simulacion.ControladorSimulacion;
 
 public class ModuloEjecucion extends Modulo {
 
-    public ModuloEjecucion(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
+    public ModuloEjecucion(ControladorSimulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         super(simulacion, siguienteModulo, numeroServidores);
     }
 
@@ -17,5 +17,11 @@ public class ModuloEjecucion extends Modulo {
     @Override
     protected void generarSalida(Consulta consulta) {
         // TODO
+    }
+
+    @Override
+    protected double getTiempoSalida(Consulta consulta) {
+        // TODO
+        return 0;
     }
 }
