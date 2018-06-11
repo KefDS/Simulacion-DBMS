@@ -1,7 +1,7 @@
-package Simulacion.Estadisticas;
+package simulacion.estadisticas;
 
-import Dominio.Enumeraciones.TipoConsulta;
-import Simulacion.PromedioTiempo;
+import dominio.enumeraciones.TipoConsulta;
+import simulacion.PromedioTiempo;
 
 import java.util.EnumMap;
 import java.util.Map;

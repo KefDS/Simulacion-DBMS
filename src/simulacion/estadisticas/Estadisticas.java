@@ -1,8 +1,8 @@
-package Simulacion.Estadisticas;
+package simulacion.estadisticas;
 
-import Dominio.Modulos.Modulo;
-import Dominio.Enumeraciones.TipoMudulo;
-import Simulacion.PromedioTiempo;
+import dominio.modulos.Modulo;
+import dominio.enumeraciones.TipoMudulo;
+import simulacion.PromedioTiempo;
 
 import java.util.ArrayList;
 import java.util.List;

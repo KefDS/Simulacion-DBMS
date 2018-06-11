@@ -1,4 +1,4 @@
-package Simulacion.Estadisticas;
+package simulacion.estadisticas;
 
 public class EstadisticaConsulta {
     private final double tiempoInicial;
