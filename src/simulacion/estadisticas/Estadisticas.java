@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Estadisticas {
-    private List<Estadistica> listaEstadisticas;
     private PromedioTiempo promedioVidaConexion;
     private int numeroConexionesDescartadas;
+    private int numeroConexionesExpiradas;
+    private int numeroConexionesCompletadas;
 
     public Estadisticas() {
-        listaEstadisticas = new ArrayList<Estadistica>();
         promedioVidaConexion = new PromedioTiempo();
         numeroConexionesDescartadas = 0;
     }
@@ -27,17 +27,27 @@ public class Estadisticas {
         numeroConexionesDescartadas++;
     }
 
-    public Estadistica obtenerEstadistica(Map<TipoMudulo, Modulo> modulos) {
-        // TODO
-        return null;
+    public int getNumeroConexionesDescartadas() {
+        return numeroConexionesDescartadas;
     }
 
-    public double getIntervaloConfianzaTiempoVidaConexion() {
-        // TODO
-        return 0;
+    public int getNumeroConexionesExpiradas() {
+        return numeroConexionesExpiradas;
     }
 
-    public Estadistica getPromediosTodasEjecuciones() {
+    public void anadirNumeroConexionesExpiradas() {
+        this.numeroConexionesExpiradas++;
+    }
+
+    public int getNumeroConexionesCompletadas() {
+        return numeroConexionesCompletadas;
+    }
+
+    public void anadirNumeroConexionesCompletadas() {
+        this.numeroConexionesCompletadas++;
+    }
+
+    public Resultados obtenerResultados(Map<TipoMudulo, EstadisticasModulo> estadisticasModulos) {
         // TODO
         return null;
     }

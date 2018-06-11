@@ -1,6 +1,7 @@
 package interfazGrafica;
 
 import interfazGrafica.bibliotecas.IntegerStringConverter;
+import simulacion.EjecucionesSimulacion;
 import simulacion.Simulacion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,23 +51,25 @@ public class IntefazGraficaController implements Initializable {
         conexionesMaximasSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 10));
         servidoresProcesamientoSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 3));
 
-        listaSpinners.stream().forEach(spinner -> IntegerStringConverter.createFor(spinner));
+        listaSpinners.forEach(IntegerStringConverter::createFor);
     }
 
 
     public void handleEmpezarSimulacion(ActionEvent actionEvent) {
         empezarSimulacionButton.setText("Corriendo simulacion...");
         empezarSimulacionButton.setDisable(true);
-        listaSpinners.stream().forEach(item -> item.setDisable(true));
+        listaSpinners.forEach(item -> item.setDisable(true));
 
-        Simulacion simulacion = new Simulacion();
-        simulacion.iniciarSimulacion(numeroEjecucciones.getValue(),
+        EjecucionesSimulacion ejecucionesSimulacion = new EjecucionesSimulacion(
+                numeroEjecucciones.getValue(),
                 duracionSegSpinner.getValue(),
-                modoLentoCheckbox.isSelected(),
                 conexionesMaximasSpinner.getValue(),
                 timeoutSpinner.getValue(),
                 servidoresProcesamientoSpinner.getValue(),
                 servidoresTransaccionesSpinner.getValue(),
-                servidoresEjecuccionSpinner.getValue());
+                servidoresEjecuccionSpinner.getValue(),
+                modoLentoCheckbox.isSelected()
+        );
+        ejecucionesSimulacion.empezarEjecucciones();
     }
 }

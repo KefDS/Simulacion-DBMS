@@ -1,6 +1,7 @@
 package dominio.modulos;
 
 import dominio.Consulta;
+import javafx.util.Pair;
 import simulacion.Simulacion;
 import simulacion.enumeraciones.TipoEvento;
 import simulacion.estadisticas.EstadisticasModulo;
@@ -11,7 +12,7 @@ import java.util.Queue;
 
 public abstract class Modulo {
     protected final Simulacion simulacion;
-    protected Queue<Consulta> colaConsultas;
+    Queue<Consulta> colaConsultas;
     Modulo siguienteModulo;
     int numeroServidores;
     private EstadisticasModulo estadisticasModulo;
@@ -96,7 +97,7 @@ public abstract class Modulo {
     }
 
     private void terminarConsulta(Consulta consulta) {
-        simulacion.getEstadisticas().anadirConexionDescartada();
+        simulacion.getEstadisticas().anadirNumeroConexionesExpiradas();
         simulacion.getEstadisticas().anadirTiempoConsultaFinalizada(
                 consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
         simulacion.liberarConexion();
@@ -109,5 +110,10 @@ public abstract class Modulo {
     public void limpiarModulo() {
         colaConsultas.clear();
         estadisticasModulo = new EstadisticasModulo();
+    }
+
+    public Pair<Integer, Integer> datosActuales() {
+        // Pair<Consultas en cola, numero de servidores>
+        return new Pair<>(colaConsultas.size(), numeroServidores);
     }
 }

@@ -55,6 +55,7 @@ public class ModuloClientes extends Modulo {
 
     @Override
     public void procesarSalida(Consulta consulta) {
+        simulacion.getEstadisticas().anadirNumeroConexionesCompletadas();
         simulacion.getEstadisticas().anadirTiempoConsultaFinalizada(
                 consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
         // Borra evento TIMEOUT de la cola eventos
