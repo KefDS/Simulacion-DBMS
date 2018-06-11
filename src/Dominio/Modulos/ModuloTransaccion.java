@@ -3,6 +3,10 @@ package Dominio.Modulos;
 import Dominio.Consulta;
 import Dominio.Enumeraciones.TipoConsulta;
 import Simulacion.ControladorSimulacion;
+import Simulacion.ValoresAleatorios;
+
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 public class ModuloTransaccion extends Modulo {
 
@@ -13,6 +17,19 @@ public class ModuloTransaccion extends Modulo {
         super(simulacion, siguienteModulo, numeroServidores);
         prioridadDDL = false;
         numeroServidoresTotal = numeroServidores;
+
+        colaConsultas = new PriorityQueue<>((consulta1, consulta2) -> {
+            if (consulta1.getTipoConsulta() == TipoConsulta.DDL) {
+                if (consulta2.getTipoConsulta() == TipoConsulta.DDL) {
+                    return Double.compare(consulta1.getEstadisticaConsulta().getTiempoLlegadaModulo(),
+                            consulta2.getEstadisticaConsulta().getTiempoLlegadaModulo());
+                } else {
+                    return -1;
+                }
+            }
+            return Double.compare(consulta1.getEstadisticaConsulta().getTiempoLlegadaModulo(),
+                    consulta2.getEstadisticaConsulta().getTiempoLlegadaModulo());
+        });
     }
 
     @Override
@@ -47,78 +64,52 @@ public class ModuloTransaccion extends Modulo {
         }
     }
 
-    @Override
-    public void procesarSalida(Consulta consulta) {
-        // Anade tiempo de servicio
-        estadisticasModulo.anadirTiempoServicio(consulta.getTipoConsulta(),
-                consulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
-
-        // La consulta DDL se termino de procesar?
-        if (prioridadDDL && consulta.getTipoConsulta() == TipoConsulta.DDL) prioridadDDL = false;
-
-        revisarTimeout(consulta);
-
-        // Consulta DDL esperando?
-        if (prioridadDDL) {
-            if (numeroServidores == numeroServidoresTotal - 1) {
-                Consulta consultaDDL = colaConsultas.poll();
-                estadisticasModulo.anadirTiempoClienteEnCola(
-                        consultaDDL.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
-                generarSalida(consultaDDL);
-            } else {
-                numeroServidores++;
-            }
-        } else {
-            Consulta siguienteConsulta = getSiguienteConsulta();
-            if (siguienteConsulta != null) {
-                if (siguienteConsulta.getTipoConsulta() == TipoConsulta.DDL) {
-                    // Todos los servidores disponibles?
-                    if (numeroServidores == numeroServidoresTotal - 1) {
-                        prioridadDDL = true;
-                        estadisticasModulo.anadirTiempoClienteEnCola(
-                                siguienteConsulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
-                        generarSalida(siguienteConsulta);
-                    } else {
-                        prioridadDDL = true;
-                        colaConsultas.add(consulta);
-                    }
-                }
-                estadisticasModulo.anadirTiempoClienteEnCola(
-                        siguienteConsulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
-                generarSalida(siguienteConsulta);
-            } else {
-                numeroServidores++;
-            }
-        }
-    }
-
     private void atender(Consulta consulta) {
         numeroServidores--;
         generarSalida(consulta);
     }
 
-//    @Override
-//    protected Consulta getSiguienteConsulta() {
-//        // Consulta DDL esperando?
-//        if (prioridadDDL) {
-//            if (numeroServidores == numeroServidoresTotal - 1) {
-//                return colaConsultas.poll();
-//            } else {
-//                return null;
-//            }
-//        } else {
-//            return colaConsultas.poll();
-//        }
-//    }
+    @Override
+    public void procesarSalida(Consulta consulta) {
+        // La consulta DDL se termino de procesar?
+        if (prioridadDDL && consulta.getTipoConsulta() == TipoConsulta.DDL) prioridadDDL = false;
+
+        super.procesarSalida(consulta);
+    }
 
     @Override
-    protected void generarSalida(Consulta consulta) {
-        // TODO
+    protected Consulta getSiguienteConsulta() {
+        if (colaConsultas.peek() == null) return null;
+        // Consulta DDL esperando?
+        if (prioridadDDL) {
+            if (numeroServidores == numeroServidoresTotal - 1) {
+                return colaConsultas.poll();
+            } else {
+                return null;
+            }
+        } else {
+            // Siguiente consulta es DDL?
+            if (colaConsultas.peek().getTipoConsulta() == TipoConsulta.DDL) {
+                prioridadDDL = true;
+                // Todos los servidores libres?
+                return (numeroServidores == numeroServidoresTotal - 1) ? colaConsultas.poll() : null;
+            } else {
+                return colaConsultas.poll();
+            }
+        }
     }
 
     @Override
     protected double getTiempoSalida(Consulta consulta) {
-        // TODO
-        return 0;
+        int numeroBloques = 0;
+        double tiempo = numeroServidoresTotal * 30;
+        if (consulta.getTipoConsulta() == TipoConsulta.JOIN) {
+            numeroBloques = (int) Math.round(ValoresAleatorios.generarValorDistribucionUniforme(1, 64));
+        } else if (consulta.getTipoConsulta() == TipoConsulta.SELECT) {
+            numeroBloques = 1;
+        }
+        tiempo += numeroBloques * 100;
+        consulta.setNumeroBloques(numeroBloques);
+        return tiempo;
     }
 }

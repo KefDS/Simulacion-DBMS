@@ -21,39 +21,27 @@ public class ModuloClientes extends Modulo {
         this.siguienteModulo = siguienteModulo;
     }
 
-
-    public void liberarConexion() {
-        numeroServidores++;
-    }
-
     @Override
     public void procesarEntrada(Consulta consulta) {
-        // Servidores disponibles?
-        if (numeroServidores > 0) {
-            numeroServidores--;
-            generarTimeout(consulta);
-            siguienteModulo.procesarEntrada(consulta);
+        // TODO: mejorar logica
+        // Nota: Para no romper la interface, la entrada que le envia
+        // modulo ejecucion sera procesada aqui tambien
+        if (consulta.getNumeroBloques() == -1) {
+            // Servidores disponibles?
+            if (numeroServidores > 0) {
+                numeroServidores--;
+                generarTimeout(consulta);
+                siguienteModulo.procesarEntrada(consulta);
+            } else {
+                // Se rechaza conexion
+                simulacion.getEstadisticas().anadirConexionDescartada();
+            }
+            generarEntrada();
         } else {
-            // Se rechaza conexion
-            simulacion.getEstadisticas().anadirConexionDescartada();
+            generarSalida(consulta);
         }
-        generarEntrada();
-    }
 
-    @Override
-    public void procesarSalida(Consulta consulta) {
-        // TODO
-    }
 
-    @Override
-    protected void generarSalida(Consulta consulta) {
-        // TODO
-    }
-
-    @Override
-    protected double getTiempoSalida(Consulta consulta) {
-        // TODO: No se usa, buscar mejor herencia
-        return 0;
     }
 
     public void generarEntrada() {
@@ -64,11 +52,31 @@ public class ModuloClientes extends Modulo {
         simulacion.anadirEvento(new Evento(tiempo, this, TipoEvento.LLEGADA, consulta));
     }
 
+
+    @Override
+    public void procesarSalida(Consulta consulta) {
+        simulacion.getEstadisticas().anadirTiempoConsultaFinalizada(
+                consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
+        // Borra evento TIMEOUT de la cola eventos
+        simulacion.eliminarEvento(consulta);
+        liberarConexion();
+    }
+
+    @Override
+    protected double getTiempoSalida(Consulta consulta) {
+        // TODO: Numero de bloques es discreto?
+        return Math.round(((double) consulta.getNumeroBloques()) / 64) * 1000;
+    }
+
     private void generarTimeout(Consulta consulta) {
         simulacion.anadirEvento(new Evento(
                 simulacion.getReloj() + timeout,
                 null,
                 TipoEvento.TIMEOUT,
                 consulta));
+    }
+
+    public void liberarConexion() {
+        numeroServidores++;
     }
 }

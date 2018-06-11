@@ -7,8 +7,6 @@ import Simulacion.Estadisticas.EstadisticaConsulta;
 public class Consulta {
     private Modulo moduloActual;
     private final TipoConsulta tipo;
-    // TODO: Revisar esto
-    // Esta variable de instancia guardara el numero de bloques que se cargan
     private int numeroBloques;
     private boolean timeout;
     private final EstadisticaConsulta estadisticaConsulta;
@@ -18,6 +16,7 @@ public class Consulta {
         this.tipo = tipo;
         timeout = false;
         estadisticaConsulta = new EstadisticaConsulta(tiempoInicial);
+        numeroBloques = -1;
     }
 
     public void setModuloActual(Modulo moduloActual) {

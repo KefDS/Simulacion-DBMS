@@ -5,10 +5,7 @@ import Dominio.Modulos.*;
 import Dominio.Enumeraciones.TipoMudulo;
 import Simulacion.Estadisticas.Estadisticas;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 public class ControladorSimulacion {
     // TODO: GUI
@@ -37,7 +34,7 @@ public class ControladorSimulacion {
 
         for (int i = 0; i < veces; i++) {
             long limiteTiempo = System.currentTimeMillis() + (tiempoTotal * 1000);
-            ((ModuloClientes) modulos.get(TipoMudulo.CLIENTES)).generarEntrada();
+            ((ModuloClientes) modulos.get(TipoMudulo.CLIENTES)).generarEntrada(); // Primera llegada
 
             while (true /*System.currentTimeMillis() < limiteTiempo*/) {
                 Evento eventoActual = colaEventos.poll();
@@ -87,6 +84,10 @@ public class ControladorSimulacion {
 
     public void anadirEvento(Evento evento) {
         colaEventos.add(evento);
+    }
+
+    public void eliminarEvento(Consulta consulta) {
+        colaEventos.removeIf(evento -> evento.getConsulta() == consulta);
     }
 
     public Estadisticas getEstadisticas() {

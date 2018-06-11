@@ -2,6 +2,7 @@ package Simulacion.Estadisticas;
 
 public class EstadisticaConsulta {
     private final double tiempoInicial;
+
     private double tiempoLlegadaModulo;
 
     public EstadisticaConsulta(double tiempoInicial) {
@@ -11,6 +12,8 @@ public class EstadisticaConsulta {
     public double getTiempoDeVida(double tiempo) {
         return tiempo - tiempoInicial;
     }
+
+    public double getTiempoLlegadaModulo() { return tiempoLlegadaModulo; }
 
     public double getTiempoDesdeLlegadaModulo(double tiempo) {
         return tiempo - tiempoLlegadaModulo;

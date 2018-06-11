@@ -6,22 +6,22 @@ import Simulacion.Enumeraciones.TipoEvento;
 import Simulacion.Estadisticas.EstadisticasModulo;
 import Simulacion.Evento;
 
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public abstract class Modulo {
     protected final ControladorSimulacion simulacion;
-    protected final Queue<Consulta> colaConsultas;
-    protected Modulo siguienteModulo;
-    protected int numeroServidores;
-    protected EstadisticasModulo estadisticasModulo;
+    protected Queue<Consulta> colaConsultas;
+    Modulo siguienteModulo;
+    int numeroServidores;
+    private EstadisticasModulo estadisticasModulo;
 
     public Modulo(ControladorSimulacion simulacion, int numeroServidores) {
         this.simulacion = simulacion;
         this.numeroServidores = numeroServidores;
 
         estadisticasModulo = new EstadisticasModulo();
-        colaConsultas = new PriorityQueue<>();
+        colaConsultas = new LinkedList<>();
     }
 
     public Modulo(ControladorSimulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
@@ -45,8 +45,11 @@ public abstract class Modulo {
         estadisticasModulo.anadirTiempoServicio(consulta.getTipoConsulta(),
                 consulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
 
-        revisarTimeout(consulta);
+        finalizacionConsultaProcesada(consulta);
+        siguienteConsulta();
+    }
 
+    private void siguienteConsulta() {
         // Hay clientes esperando?
         Consulta siguienteConsulta = getSiguienteConsulta();
         if (siguienteConsulta != null) {
@@ -58,7 +61,7 @@ public abstract class Modulo {
         }
     }
 
-    protected void revisarTimeout(Consulta consulta) {
+    private void finalizacionConsultaProcesada(Consulta consulta) {
         if (consulta.isTimeout()) {
             terminarConsulta(consulta);
         } else {
