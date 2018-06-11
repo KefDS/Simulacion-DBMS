@@ -1,17 +1,15 @@
-package Dominio.Modulos;
+package dominio.modulos;
 
-import Dominio.Consulta;
-import Simulacion.ControladorSimulacion;
-import Simulacion.Enumeraciones.TipoEvento;
-import Simulacion.Evento;
-import Simulacion.ValoresAleatorios;
+import dominio.Consulta;
+import simulacion.Simulacion;
+import simulacion.ValoresAleatorios;
 
 public class ModuloAdministracionProcesos extends Modulo {
 
     private final int media;
     private final double desviacionEstandar;
 
-    public ModuloAdministracionProcesos(ControladorSimulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
+    public ModuloAdministracionProcesos(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         super(simulacion, siguienteModulo, numeroServidores);
 
         media = 1000; // 1 seg -> 1000 milisegundos

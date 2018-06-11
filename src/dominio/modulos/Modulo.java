@@ -1,22 +1,22 @@
-package Dominio.Modulos;
+package dominio.modulos;
 
-import Dominio.Consulta;
-import Simulacion.ControladorSimulacion;
-import Simulacion.Enumeraciones.TipoEvento;
-import Simulacion.Estadisticas.EstadisticasModulo;
-import Simulacion.Evento;
+import dominio.Consulta;
+import simulacion.Simulacion;
+import simulacion.enumeraciones.TipoEvento;
+import simulacion.estadisticas.EstadisticasModulo;
+import simulacion.Evento;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
 public abstract class Modulo {
-    protected final ControladorSimulacion simulacion;
+    protected final Simulacion simulacion;
     protected Queue<Consulta> colaConsultas;
     Modulo siguienteModulo;
     int numeroServidores;
     private EstadisticasModulo estadisticasModulo;
 
-    public Modulo(ControladorSimulacion simulacion, int numeroServidores) {
+    public Modulo(Simulacion simulacion, int numeroServidores) {
         this.simulacion = simulacion;
         this.numeroServidores = numeroServidores;
 
@@ -24,7 +24,7 @@ public abstract class Modulo {
         colaConsultas = new LinkedList<>();
     }
 
-    public Modulo(ControladorSimulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
+    public Modulo(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         this(simulacion, numeroServidores);
         this.siguienteModulo = siguienteModulo;
     }

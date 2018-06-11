@@ -1,12 +1,12 @@
-package Dominio.Modulos;
+package dominio.modulos;
 
-import Dominio.Consulta;
-import Dominio.Enumeraciones.TipoConsulta;
-import Simulacion.ControladorSimulacion;
+import dominio.Consulta;
+import dominio.enumeraciones.TipoConsulta;
+import simulacion.Simulacion;
 
 public class ModuloEjecucion extends Modulo {
 
-    public ModuloEjecucion(ControladorSimulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
+    public ModuloEjecucion(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         super(simulacion, siguienteModulo, numeroServidores);
     }
 

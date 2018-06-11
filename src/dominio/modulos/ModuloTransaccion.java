@@ -1,11 +1,10 @@
-package Dominio.Modulos;
+package dominio.modulos;
 
-import Dominio.Consulta;
-import Dominio.Enumeraciones.TipoConsulta;
-import Simulacion.ControladorSimulacion;
-import Simulacion.ValoresAleatorios;
+import dominio.Consulta;
+import dominio.enumeraciones.TipoConsulta;
+import simulacion.Simulacion;
+import simulacion.ValoresAleatorios;
 
-import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class ModuloTransaccion extends Modulo {
@@ -13,7 +12,7 @@ public class ModuloTransaccion extends Modulo {
     private boolean prioridadDDL;
     private int numeroServidoresTotal;
 
-    public ModuloTransaccion(ControladorSimulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
+    public ModuloTransaccion(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         super(simulacion, siguienteModulo, numeroServidores);
         prioridadDDL = false;
         numeroServidoresTotal = numeroServidores;

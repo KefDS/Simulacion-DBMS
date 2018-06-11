@@ -1,8 +1,8 @@
-package Dominio;
+package dominio;
 
-import Dominio.Enumeraciones.TipoConsulta;
-import Dominio.Modulos.Modulo;
-import Simulacion.Estadisticas.EstadisticaConsulta;
+import dominio.enumeraciones.TipoConsulta;
+import dominio.modulos.Modulo;
+import simulacion.estadisticas.EstadisticaConsulta;
 
 public class Consulta {
     private Modulo moduloActual;

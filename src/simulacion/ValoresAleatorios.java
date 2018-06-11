@@ -1,6 +1,6 @@
-package Simulacion;
+package simulacion;
 
-import Dominio.Enumeraciones.TipoConsulta;
+import dominio.enumeraciones.TipoConsulta;
 
 import java.util.EnumMap;
 import java.util.Map;

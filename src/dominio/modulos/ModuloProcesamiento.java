@@ -1,12 +1,12 @@
-package Dominio.Modulos;
+package dominio.modulos;
 
-import Dominio.Consulta;
-import Simulacion.ControladorSimulacion;
-import Simulacion.ValoresAleatorios;
+import dominio.Consulta;
+import simulacion.Simulacion;
+import simulacion.ValoresAleatorios;
 
 public class ModuloProcesamiento extends Modulo {
 
-    public ModuloProcesamiento(ControladorSimulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
+    public ModuloProcesamiento(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         super(simulacion, siguienteModulo, numeroServidores);
     }
 

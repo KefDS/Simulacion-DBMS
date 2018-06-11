@@ -1,8 +1,8 @@
-package Simulacion;
+package simulacion;
 
-import Dominio.Consulta;
-import Simulacion.Enumeraciones.TipoEvento;
-import Dominio.Modulos.Modulo;
+import dominio.Consulta;
+import simulacion.enumeraciones.TipoEvento;
+import dominio.modulos.Modulo;
 
 public class Evento implements Comparable<Evento> {
     private final double tiempoEvento;

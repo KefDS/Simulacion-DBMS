@@ -1,7 +1,7 @@
-package InterfazGrafica;
+package interfazGrafica;
 
-import InterfazGrafica.bibliotecas.IntegerStringConverter;
-import Simulacion.ControladorSimulacion;
+import interfazGrafica.bibliotecas.IntegerStringConverter;
+import simulacion.Simulacion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -59,7 +59,7 @@ public class IntefazGraficaController implements Initializable {
         empezarSimulacionButton.setDisable(true);
         listaSpinners.stream().forEach(item -> item.setDisable(true));
 
-        ControladorSimulacion simulacion = new ControladorSimulacion();
+        Simulacion simulacion = new Simulacion();
         simulacion.iniciarSimulacion(numeroEjecucciones.getValue(),
                 duracionSegSpinner.getValue(),
                 modoLentoCheckbox.isSelected(),
