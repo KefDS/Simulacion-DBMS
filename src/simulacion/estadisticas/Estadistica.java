@@ -1,8 +1,8 @@
-package Simulacion.Estadisticas;
+package simulacion.estadisticas;
 
-import Dominio.Enumeraciones.TipoConsulta;
-import Dominio.Modulos.Modulo;
-import Dominio.Enumeraciones.TipoMudulo;
+import dominio.enumeraciones.TipoConsulta;
+import dominio.modulos.Modulo;
+import dominio.enumeraciones.TipoMudulo;
 
 import java.util.Map;
 

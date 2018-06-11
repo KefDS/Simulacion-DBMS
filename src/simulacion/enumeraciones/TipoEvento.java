@@ -1,4 +1,4 @@
-package Simulacion.Enumeraciones;
+package simulacion.enumeraciones;
 
 public enum TipoEvento {
     LLEGADA,

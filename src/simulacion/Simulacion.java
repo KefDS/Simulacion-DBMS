@@ -1,20 +1,20 @@
-package Simulacion;
+package simulacion;
 
-import Dominio.Consulta;
-import Dominio.Modulos.*;
-import Dominio.Enumeraciones.TipoMudulo;
-import Simulacion.Estadisticas.Estadisticas;
+import dominio.Consulta;
+import dominio.modulos.*;
+import dominio.enumeraciones.TipoMudulo;
+import simulacion.estadisticas.Estadisticas;
 
 import java.util.*;
 
-public class ControladorSimulacion {
+public class Simulacion {
     // TODO: GUI
     private double reloj;
     private Queue<Evento> colaEventos;
     private Map<TipoMudulo, Modulo> modulos;
     private Estadisticas estadisticas;
 
-    public ControladorSimulacion() {
+    public Simulacion() {
         reloj = 0;
         colaEventos = new PriorityQueue<Evento>();
         estadisticas = new Estadisticas();
@@ -51,14 +51,17 @@ public class ControladorSimulacion {
                         eventoActual.getConsulta().getModuloActual().procesarTimeout(eventoActual.getConsulta());
                         break;
                 }
+                modoLento(modoLento);
+            }
+        }
+    }
 
-                if (modoLento) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+    private void modoLento(boolean modoLento) {
+        if (modoLento) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

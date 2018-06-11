@@ -1,4 +1,4 @@
-package Simulacion;
+package simulacion;
 
 public class PromedioTiempo {
     private int conteo;

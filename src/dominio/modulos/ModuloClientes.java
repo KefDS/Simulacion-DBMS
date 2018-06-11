@@ -1,17 +1,17 @@
-package Dominio.Modulos;
+package dominio.modulos;
 
-import Dominio.Consulta;
-import Simulacion.ControladorSimulacion;
-import Simulacion.Enumeraciones.TipoEvento;
-import Simulacion.Evento;
-import Simulacion.ValoresAleatorios;
+import dominio.Consulta;
+import simulacion.Simulacion;
+import simulacion.enumeraciones.TipoEvento;
+import simulacion.Evento;
+import simulacion.ValoresAleatorios;
 
 public class ModuloClientes extends Modulo {
 
     private final int timeout;
     private final double lambda;
 
-    public ModuloClientes(ControladorSimulacion simulacion, int numeroServidores, int timeout) {
+    public ModuloClientes(Simulacion simulacion, int numeroServidores, int timeout) {
         super(simulacion, numeroServidores);
         this.timeout = timeout * 1000; // 1 segundos -> 1000 milisegundos
         lambda = 0.0005; // 30 conexiones por minuto -> 0.0005 conexiones por milisegundo

@@ -1,4 +1,4 @@
-package InterfazGrafica.bibliotecas;
+package interfazGrafica.bibliotecas;
 
 import javafx.application.Platform;
 import javafx.event.*;

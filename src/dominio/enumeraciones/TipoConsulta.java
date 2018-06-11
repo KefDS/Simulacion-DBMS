@@ -1,4 +1,4 @@
-package Dominio.Enumeraciones;
+package dominio.enumeraciones;
 
 public enum TipoConsulta {
     SELECT(true),
