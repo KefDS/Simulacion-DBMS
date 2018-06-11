@@ -7,6 +7,7 @@ import Simulacion.Estadisticas.EstadisticaConsulta;
 public class Consulta {
     private Modulo moduloActual;
     private final TipoConsulta tipo;
+    private int numeroBloques;
     private boolean timeout;
     private final EstadisticaConsulta estadisticaConsulta;
 
@@ -15,6 +16,7 @@ public class Consulta {
         this.tipo = tipo;
         timeout = false;
         estadisticaConsulta = new EstadisticaConsulta(tiempoInicial);
+        numeroBloques = -1;
     }
 
     public void setModuloActual(Modulo moduloActual) {
@@ -39,5 +41,13 @@ public class Consulta {
 
     public boolean isTimeout() {
         return timeout;
+    }
+
+    public int getNumeroBloques() {
+        return numeroBloques;
+    }
+
+    public void setNumeroBloques(int numeroBloques) {
+        this.numeroBloques = numeroBloques;
     }
 }
