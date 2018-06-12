@@ -1,5 +1,6 @@
 package interfazGrafica;
 
+import dominio.enumeraciones.TipoModulo;
 import interfazGrafica.bibliotecas.IntegerStringConverter;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class IntefazGraficaController implements Initializable {
+    // Parametros
     @FXML
     private Button empezarSimulacionButton;
     @FXML
@@ -36,8 +38,28 @@ public class IntefazGraficaController implements Initializable {
     private Spinner<Integer> servidoresEjecuccionSpinner;
     @FXML
     private CheckBox modoLentoCheckbox;
+
+    // Ejecuccion
     @FXML
     private Label relojLabel;
+
+    // Resultados
+    @FXML
+    private Label promVidaConex;
+    @FXML
+    private Label conxDescartadas;
+    @FXML
+    private Label conxCompletadas;
+    @FXML
+    private Label conxExpiradas;
+    @FXML
+    private Label tamColaProcesos;
+    @FXML
+    private Label tamColaProcesamiento;
+    @FXML
+    private Label tamColaTransaccion;
+    @FXML
+    private Label tamColaEjecuccion;
 
     private List<Spinner<Integer>> listaSpinners;
 
@@ -74,11 +96,21 @@ public class IntefazGraficaController implements Initializable {
                 modoLentoCheckbox.isSelected()
         );
 
-        // Anade observadores
+        // Observadores
         ejecucionesSimulacion.addObserver(data -> {
             Resultados resultados = (Resultados) data;
-            // TODO: Desplegar resultados de una ejecuccion
-            Platform.runLater(() -> relojLabel.setText(Double.toString(resultados.tiempoPromedioVidaConexion)));
+
+            Platform.runLater(() -> {
+                promVidaConex.setText(Double.toString(resultados.tiempoPromedioVidaConexion));
+                conxCompletadas.setText(Integer.toString(resultados.numeroConexionesCompletadas));
+                conxDescartadas.setText(Integer.toString(resultados.numeroConexionesDescartadas));
+                conxExpiradas.setText(Integer.toString(resultados.numeroConexionesExpiradas));
+
+                tamColaProcesos.setText(Integer.toString(resultados.tamanoPromedioCola.get(TipoModulo.PROCESOS)));
+                tamColaProcesamiento.setText(Integer.toString(resultados.tamanoPromedioCola.get(TipoModulo.PROCESAMINETO)));
+                tamColaTransaccion.setText(Integer.toString(resultados.tamanoPromedioCola.get(TipoModulo.TRANSACCION)));
+                tamColaEjecuccion.setText(Integer.toString(resultados.tamanoPromedioCola.get(TipoModulo.EJECUCCION)));
+            });
         });
 
         ejecucionesSimulacion.getSimulacion().addObserver(data -> {

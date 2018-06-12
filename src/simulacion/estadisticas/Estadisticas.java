@@ -62,9 +62,8 @@ public class Estadisticas {
         Arrays.stream(TipoModulo.values()).forEach(tipo ->
                 tiempoPromedioConsultaPorModulo.put(tipo, estadisticasModulos.get(tipo).sacarTiempoServicioTipoConsulta()));
 
-        return new Resultados(tamanoPromedioCola,
-                promedioVidaConexion.getPromedio(),
-                getNumeroConexionesDescartadas(),
-                tiempoPromedioConsultaPorModulo);
+        return new Resultados(getNumeroConexionesCompletadas(), getNumeroConexionesDescartadas(),
+                getNumeroConexionesExpiradas(), promedioVidaConexion.getPromedio(),
+                tamanoPromedioCola, tiempoPromedioConsultaPorModulo);
     }
 }
