@@ -2,7 +2,7 @@ package simulacion;
 
 import dominio.Consulta;
 import dominio.modulos.*;
-import dominio.enumeraciones.TipoMudulo;
+import dominio.enumeraciones.TipoModulo;
 import interfazGrafica.interfaces.Observable;
 import interfazGrafica.interfaces.Observer;
 import javafx.util.Pair;
@@ -10,14 +10,18 @@ import simulacion.estadisticas.DatosParciales;
 import simulacion.estadisticas.Estadisticas;
 import simulacion.estadisticas.Resultados;
 
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class Simulacion implements Observable {
     private double reloj;
     private final Queue<Evento> colaEventos;
-    private final Map<TipoMudulo, Modulo> modulos;
+    private final Map<TipoModulo, Modulo> modulos;
     private Estadisticas estadisticas;
     private final long tiempoTotal;
     private boolean modoLento;
@@ -31,7 +35,7 @@ public class Simulacion implements Observable {
         this.tiempoTotal = tiempoTotal * 1000;
         colaEventos = new PriorityQueue<>();
         estadisticas = new Estadisticas();
-        modulos = new EnumMap<>(TipoMudulo.class);
+        modulos = new EnumMap<>(TipoModulo.class);
         inicializadorModulos(conexionesMaximas, timeout,
                 servidoresProcesamiento, servidoresTransaccion, servidoresEjecuccion);
         this.modoLento = modoLento;
@@ -46,18 +50,18 @@ public class Simulacion implements Observable {
         Modulo moduloProcesos = new ModuloAdministracionProcesos(this, moduloProcesamiento, 1); // 2
         ((ModuloClientes) moduloClientes).setSiguienteModulo(moduloProcesos); // 1
 
-        modulos.put(TipoMudulo.CLIENTES, moduloClientes);
-        modulos.put(TipoMudulo.PROCESOS, moduloProcesos);
-        modulos.put(TipoMudulo.PROCESAMINETO, moduloProcesamiento);
-        modulos.put(TipoMudulo.TRANSACCION, moduloTransaccion);
-        modulos.put(TipoMudulo.EJECUCCION, moduloEjecucion);
+        modulos.put(TipoModulo.CLIENTES, moduloClientes);
+        modulos.put(TipoModulo.PROCESOS, moduloProcesos);
+        modulos.put(TipoModulo.PROCESAMINETO, moduloProcesamiento);
+        modulos.put(TipoModulo.TRANSACCION, moduloTransaccion);
+        modulos.put(TipoModulo.EJECUCCION, moduloEjecucion);
     }
 
-    public Resultados iniciarSimulacion() {
+    public Resultados realizarSimulacion() {
         long limiteTiempo = System.currentTimeMillis() + tiempoTotal;
-        ((ModuloClientes) modulos.get(TipoMudulo.CLIENTES)).generarEntrada(); // Primera llegada
+        ((ModuloClientes) modulos.get(TipoModulo.CLIENTES)).generarEntrada(); // Primera llegada
 
-        while (true /*System.currentTimeMillis() < limiteTiempo*/) {
+        while (System.currentTimeMillis() < limiteTiempo) {
             Evento eventoActual = colaEventos.poll();
             reloj = eventoActual.getTiempoEvento();
 
@@ -76,15 +80,16 @@ public class Simulacion implements Observable {
             observersQueue.forEach(observer -> observer.notify(retornarDatosParciales()));
             pausaSimulacion(modoLento);
         }
-//        return estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(
-//                Map.Entry::getKey,
-//                entry -> entry.getValue().getEstadisticasModulo()
-//        )));
+        
+        return estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> entry.getValue().getEstadisticasModulo()
+        )));
     }
 
     private DatosParciales retornarDatosParciales() {
-        Map<TipoMudulo, Pair<Integer, Integer>> informacionPorModulo = new EnumMap<>(TipoMudulo.class);
-        Arrays.stream(TipoMudulo.values()).forEach(tipo ->
+        Map<TipoModulo, Pair<Integer, Integer>> informacionPorModulo = new EnumMap<>(TipoModulo.class);
+        Arrays.stream(TipoModulo.values()).forEach(tipo ->
                 informacionPorModulo.put(tipo, modulos.get(tipo).datosActuales()));
         return new DatosParciales(reloj, estadisticas.getNumeroConexionesCompletadas(),
                 estadisticas.getNumeroConexionesDescartadas(),
@@ -118,9 +123,8 @@ public class Simulacion implements Observable {
         return estadisticas;
     }
 
-    // TODO: Mejor forma
     public void liberarConexion() {
-        ((ModuloClientes) modulos.get(TipoMudulo.CLIENTES)).liberarConexion();
+        ((ModuloClientes) modulos.get(TipoModulo.CLIENTES)).liberarConexion();
     }
 
     @Override

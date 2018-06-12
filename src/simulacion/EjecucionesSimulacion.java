@@ -30,11 +30,12 @@ public class EjecucionesSimulacion implements Observable {
         return simulacion;
     }
 
-    public Pair<Resultados, Double> empezarEjecucciones() {
+    public Pair<Resultados, Double> realizarEjecucciones() {
         for(int i = 0; i < veces; i++) {
-            Resultados resultados = simulacion.iniciarSimulacion();
-            observersQueue.forEach(observer -> observer.notify(resultados));
+            Resultados resultados = simulacion.realizarSimulacion();
+
             this.resultados.add(resultados);
+            observersQueue.forEach(observer -> observer.notify(resultados));
         }
         // TODO: Intervalo de confianza
         return new Pair<>(getPromediosTodasEjecuciones(), 0.0);

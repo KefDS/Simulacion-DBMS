@@ -1,15 +1,14 @@
 package interfazGrafica;
 
 import interfazGrafica.bibliotecas.IntegerStringConverter;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.scene.control.*;
+import javafx.util.Pair;
 import simulacion.EjecucionesSimulacion;
-import simulacion.Simulacion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import simulacion.estadisticas.DatosParciales;
 import simulacion.estadisticas.Resultados;
 
@@ -37,6 +36,8 @@ public class IntefazGraficaController implements Initializable {
     private Spinner<Integer> servidoresEjecuccionSpinner;
     @FXML
     private CheckBox modoLentoCheckbox;
+    @FXML
+    private Label relojLabel;
 
     private List<Spinner<Integer>> listaSpinners;
 
@@ -46,7 +47,7 @@ public class IntefazGraficaController implements Initializable {
                 conexionesMaximasSpinner, servidoresProcesamientoSpinner, servidoresTransaccionesSpinner, servidoresEjecuccionSpinner);
 
         numeroEjecucciones.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 5));
-        duracionSegSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 5));
+        duracionSegSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 5));
         timeoutSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 10));
         servidoresTransaccionesSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 5));
         servidoresEjecuccionSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 5));
@@ -54,8 +55,6 @@ public class IntefazGraficaController implements Initializable {
         servidoresProcesamientoSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 3));
 
         listaSpinners.forEach(IntegerStringConverter::createFor);
-
-
     }
 
 
@@ -79,14 +78,22 @@ public class IntefazGraficaController implements Initializable {
         ejecucionesSimulacion.addObserver(data -> {
             Resultados resultados = (Resultados) data;
             // TODO: Desplegar resultados de una ejecuccion
-            System.out.println("Resultados de la ejecuccion");
+            Platform.runLater(() -> relojLabel.setText(Double.toString(resultados.tiempoPromedioVidaConexion)));
         });
 
         ejecucionesSimulacion.getSimulacion().addObserver(data -> {
             DatosParciales datos = (DatosParciales) data;
-            // TODO: Desplegar informacion entre ticks
+            //Platform.runLater(() -> relojLabel.setText(Double.toString(datos.reloj)));
         });
 
-        ejecucionesSimulacion.empezarEjecucciones();
+        Task<Pair<Resultados, Double>> task = new Task<Pair<Resultados, Double>>() {
+            @Override
+            protected Pair<Resultados, Double> call() throws Exception {
+                return ejecucionesSimulacion.realizarEjecucciones();
+            }
+        };
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

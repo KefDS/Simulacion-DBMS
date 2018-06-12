@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
+
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="interfazGrafica.IntefazGraficaController">
     <children>
         <SplitPane dividerPositions="0.2506, 0.7506" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
@@ -38,11 +49,11 @@
                                     </rowConstraints>
                                     <children>
                                         <Label text="Numero de ejecuciones" />
-                                        <Spinner fx:id="numeroEjecucciones" editable="true" GridPane.columnIndex="1" GridPane.halignment="LEFT"/>
+                                        <Spinner fx:id="numeroEjecucciones" editable="true" GridPane.columnIndex="1" GridPane.halignment="LEFT" />
                                         <Label text="Duracion simulación" GridPane.rowIndex="1" />
                                         <Spinner fx:id="duracionSegSpinner" editable="true" prefHeight="25.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                         <Label text="Conexiones máximas" GridPane.rowIndex="3" />
-                                        <Spinner fx:id="conexionesMaximasSpinner" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                                        <Spinner fx:id="conexionesMaximasSpinner" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                         <Label text="Módulo Procesamiento consultas" GridPane.rowIndex="4" />
                                         <Spinner fx:id="servidoresProcesamientoSpinner" editable="true" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
                                         <Label text="Módulo Transacciones" GridPane.rowIndex="5" />
@@ -73,6 +84,8 @@
                 <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
                     <children>
                         <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Ejecución" textAlignment="CENTER" textFill="$x2" wrapText="false" />
+                  <Label layoutX="52.0" layoutY="70.0" text="Reloj" />
+                  <Label fx:id="relojLabel" layoutX="119.0" layoutY="70.0" text="0" />
                     </children>
                 </AnchorPane>
                 <AnchorPane>

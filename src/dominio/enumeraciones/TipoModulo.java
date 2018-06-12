@@ -1,6 +1,6 @@
 package dominio.enumeraciones;
 
-public enum TipoMudulo {
+public enum TipoModulo {
     CLIENTES,
     PROCESOS,
     PROCESAMINETO,

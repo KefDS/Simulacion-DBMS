@@ -1,22 +1,21 @@
 package simulacion.estadisticas;
 
 import dominio.enumeraciones.TipoConsulta;
-import dominio.modulos.Modulo;
-import dominio.enumeraciones.TipoMudulo;
+import dominio.enumeraciones.TipoModulo;
 
 import java.util.Map;
 
 public class Resultados {
-    public final Map<Modulo, Integer> tiempoPromedioCola;
+    public final Map<TipoModulo, Integer> tamanoPromedioCola;
     public final double tiempoPromedioVidaConexion;
     public final int numeroConexionesDescartadas;
-    public final Map<TipoConsulta, Map<TipoMudulo, Double>> tiempoPromedioPorTipoConsultas;
+    public final Map<TipoModulo, Map<TipoConsulta, Double>> tiempoPromedioPorTipoConsultas;
 
-    public Resultados(Map<Modulo, Integer> tiempoPromedioCola,
+    public Resultados(Map<TipoModulo, Integer> tamanoPromedioCola,
                       double tiempoPromedioVidaConexion,
                       int numeroConexionesDescartadas,
-                      Map<TipoConsulta, Map<TipoMudulo, Double>> tiempoPromedioPorTipoConsultas) {
-        this.tiempoPromedioCola = tiempoPromedioCola;
+                      Map<TipoModulo, Map<TipoConsulta, Double>> tiempoPromedioPorTipoConsultas) {
+        this.tamanoPromedioCola = tamanoPromedioCola;
         this.tiempoPromedioVidaConexion = tiempoPromedioVidaConexion;
         this.numeroConexionesDescartadas = numeroConexionesDescartadas;
         this.tiempoPromedioPorTipoConsultas = tiempoPromedioPorTipoConsultas;
