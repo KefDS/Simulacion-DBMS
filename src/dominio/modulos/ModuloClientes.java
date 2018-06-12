@@ -65,7 +65,7 @@ public class ModuloClientes extends Modulo {
     @Override
     protected double getTiempoSalida(Consulta consulta) {
         // TODO: Numero de bloques es discreto?
-        return Math.round(((double) consulta.getNumeroBloques()) / 64) * 1000;
+        return (((double) consulta.getNumeroBloques()) / 64) * 1000;
     }
 
     private void generarTimeout(Consulta consulta) {

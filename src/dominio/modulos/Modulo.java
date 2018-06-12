@@ -50,7 +50,7 @@ public abstract class Modulo {
     }
 
     private void siguienteConsulta() {
-        // Hay clientes esperando?
+        // Hay clientes esperando en fila?
         Consulta siguienteConsulta = getSiguienteConsulta();
         if (siguienteConsulta != null) {
             estadisticasModulo.anadirTiempoClienteEnCola(
