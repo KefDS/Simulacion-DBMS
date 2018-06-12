@@ -15,10 +15,12 @@ public abstract class Modulo {
     Queue<Consulta> colaConsultas;
     Modulo siguienteModulo;
     int numeroServidores;
+    protected final int numeroServidoresTotales;
     private EstadisticasModulo estadisticasModulo;
 
     public Modulo(Simulacion simulacion, int numeroServidores) {
         this.simulacion = simulacion;
+        numeroServidoresTotales = numeroServidores;
         this.numeroServidores = numeroServidores;
 
         estadisticasModulo = new EstadisticasModulo();
@@ -110,6 +112,7 @@ public abstract class Modulo {
     public void limpiarModulo() {
         colaConsultas.clear();
         estadisticasModulo = new EstadisticasModulo();
+        numeroServidores = numeroServidoresTotales;
     }
 
     public Pair<Integer, Integer> datosActuales() {

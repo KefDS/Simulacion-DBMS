@@ -10,12 +10,10 @@ import java.util.PriorityQueue;
 public class ModuloTransaccion extends Modulo {
 
     private boolean prioridadDDL;
-    private int numeroServidoresTotal;
 
     public ModuloTransaccion(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         super(simulacion, siguienteModulo, numeroServidores);
         prioridadDDL = false;
-        numeroServidoresTotal = numeroServidores;
 
         colaConsultas = new PriorityQueue<>((consulta1, consulta2) -> {
             if (consulta1.getTipoConsulta() == TipoConsulta.DDL) {
@@ -46,7 +44,7 @@ public class ModuloTransaccion extends Modulo {
                 // que va a ser atendido
                 if (consulta.getTipoConsulta() == TipoConsulta.DDL) {
                     // Todos los servidores disponibles?
-                    if (numeroServidores == numeroServidoresTotal) {
+                    if (numeroServidores == numeroServidoresTotales) {
                         atender(consulta);
                     } else {
                         prioridadDDL = true;
@@ -81,7 +79,7 @@ public class ModuloTransaccion extends Modulo {
         if (colaConsultas.peek() == null) return null;
         // Consulta DDL esperando?
         if (prioridadDDL) {
-            if (numeroServidores == numeroServidoresTotal - 1) {
+            if (numeroServidores == numeroServidoresTotales - 1) {
                 return colaConsultas.poll();
             } else {
                 return null;
@@ -91,7 +89,7 @@ public class ModuloTransaccion extends Modulo {
             if (colaConsultas.peek().getTipoConsulta() == TipoConsulta.DDL) {
                 prioridadDDL = true;
                 // Todos los servidores libres?
-                return (numeroServidores == numeroServidoresTotal - 1) ? colaConsultas.poll() : null;
+                return (numeroServidores == numeroServidoresTotales - 1) ? colaConsultas.poll() : null;
             } else {
                 return colaConsultas.poll();
             }
@@ -101,7 +99,7 @@ public class ModuloTransaccion extends Modulo {
     @Override
     protected double getTiempoSalida(Consulta consulta) {
         int numeroBloques = 0;
-        double tiempo = numeroServidoresTotal * 30;
+        double tiempo = numeroServidoresTotales * 30;
         if (consulta.getTipoConsulta() == TipoConsulta.JOIN) {
             numeroBloques = (int) Math.round(ValoresAleatorios.generarValorDistribucionUniforme(1, 64));
         } else if (consulta.getTipoConsulta() == TipoConsulta.SELECT) {
@@ -110,5 +108,11 @@ public class ModuloTransaccion extends Modulo {
         tiempo += numeroBloques * 100;
         consulta.setNumeroBloques(numeroBloques);
         return tiempo;
+    }
+
+    @Override
+    public void limpiarModulo() {
+        prioridadDDL = false;
+        super.limpiarModulo();
     }
 }

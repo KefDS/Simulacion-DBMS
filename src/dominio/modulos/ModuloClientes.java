@@ -52,7 +52,6 @@ public class ModuloClientes extends Modulo {
         simulacion.anadirEvento(new Evento(tiempo, this, TipoEvento.LLEGADA, consulta));
     }
 
-
     @Override
     public void procesarSalida(Consulta consulta) {
         simulacion.getEstadisticas().anadirNumeroConexionesCompletadas();

@@ -42,7 +42,8 @@ public class Simulacion implements Observable {
         observersQueue = new LinkedList<>();
     }
 
-    private void inicializadorModulos(int conexionesMaximas, int timeout, int servidoresProcesamiento, int servidoresTransaccion, int servidoresEjecuccion) {
+    private void inicializadorModulos(int conexionesMaximas, int timeout, int servidoresProcesamiento,
+                                      int servidoresTransaccion, int servidoresEjecuccion) {
         Modulo moduloClientes = new ModuloClientes(this, conexionesMaximas, timeout);
         Modulo moduloEjecucion = new ModuloEjecucion(this, moduloClientes, servidoresEjecuccion); // 5
         Modulo moduloTransaccion = new ModuloTransaccion(this, moduloEjecucion, servidoresTransaccion); // 4
@@ -80,17 +81,23 @@ public class Simulacion implements Observable {
             observersQueue.forEach(observer -> observer.notify(retornarDatosParciales()));
             pausaSimulacion(modoLento);
         }
-        
-        return estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(
+
+        Resultados resultados =  estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey,
                 entry -> entry.getValue().getEstadisticasModulo()
         )));
+
+        limpiarSimulacion();
+        modulos.forEach((tipoModulo, modulo) -> modulo.limpiarModulo());
+
+        return resultados;
     }
 
     private DatosParciales retornarDatosParciales() {
         Map<TipoModulo, Pair<Integer, Integer>> informacionPorModulo = new EnumMap<>(TipoModulo.class);
         Arrays.stream(TipoModulo.values()).forEach(tipo ->
                 informacionPorModulo.put(tipo, modulos.get(tipo).datosActuales()));
+
         return new DatosParciales(reloj, estadisticas.getNumeroConexionesCompletadas(),
                 estadisticas.getNumeroConexionesDescartadas(),
                 estadisticas.getNumeroConexionesExpiradas(),
@@ -125,6 +132,12 @@ public class Simulacion implements Observable {
 
     public void liberarConexion() {
         ((ModuloClientes) modulos.get(TipoModulo.CLIENTES)).liberarConexion();
+    }
+
+    private void limpiarSimulacion() {
+        reloj = 0;
+        colaEventos.clear();
+        estadisticas = new Estadisticas();
     }
 
     @Override
