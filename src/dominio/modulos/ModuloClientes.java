@@ -28,8 +28,8 @@ public class ModuloClientes extends Modulo {
         // modulo ejecucion sera procesada aqui tambien
         if (consulta.getNumeroBloques() == -1) {
             // Servidores disponibles?
-            if (numeroServidores > 0) {
-                numeroServidores--;
+            if (numeroServidoresDisponibles > 0) {
+                numeroServidoresDisponibles--;
                 generarTimeout(consulta);
                 siguienteModulo.procesarEntrada(consulta);
             } else {
@@ -77,6 +77,6 @@ public class ModuloClientes extends Modulo {
     }
 
     public void liberarConexion() {
-        numeroServidores++;
+        numeroServidoresDisponibles++;
     }
 }

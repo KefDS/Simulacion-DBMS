@@ -14,14 +14,14 @@ public abstract class Modulo {
     protected final Simulacion simulacion;
     Queue<Consulta> colaConsultas;
     Modulo siguienteModulo;
-    int numeroServidores;
+    int numeroServidoresDisponibles;
     protected final int numeroServidoresTotales;
     private EstadisticasModulo estadisticasModulo;
 
     public Modulo(Simulacion simulacion, int numeroServidores) {
         this.simulacion = simulacion;
         numeroServidoresTotales = numeroServidores;
-        this.numeroServidores = numeroServidores;
+        numeroServidoresDisponibles = numeroServidores;
 
         estadisticasModulo = new EstadisticasModulo();
         colaConsultas = new LinkedList<>();
@@ -35,8 +35,8 @@ public abstract class Modulo {
     public void procesarEntrada(Consulta consulta) {
         consulta.getEstadisticaConsulta().setTiempoLlegadaModulo(simulacion.getReloj());
         // Servidores disponibles?
-        if (numeroServidores > 0) {
-            numeroServidores--;
+        if (numeroServidoresDisponibles > 0) {
+            numeroServidoresDisponibles--;
             generarSalida(consulta);
         } else {
             colaConsultas.add(consulta);
@@ -60,7 +60,7 @@ public abstract class Modulo {
                     siguienteConsulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
             generarSalida(siguienteConsulta);
         } else {
-            numeroServidores++;
+            numeroServidoresDisponibles++;
         }
     }
 
@@ -112,11 +112,11 @@ public abstract class Modulo {
     public void limpiarModulo() {
         colaConsultas.clear();
         estadisticasModulo = new EstadisticasModulo();
-        numeroServidores = numeroServidoresTotales;
+        numeroServidoresDisponibles = numeroServidoresTotales;
     }
 
     public Pair<Integer, Integer> datosActuales() {
-        // Pair<Consultas en cola, numero de servidores>
-        return new Pair<>(colaConsultas.size(), numeroServidores);
+        // Pair<Consultas siendo atendidas, Tamano de la cola>
+        return new Pair<>(numeroServidoresTotales - numeroServidoresDisponibles, colaConsultas.size());
     }
 }

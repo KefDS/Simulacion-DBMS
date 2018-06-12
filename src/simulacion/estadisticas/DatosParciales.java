@@ -8,7 +8,7 @@ import java.util.Map;
 public class DatosParciales {
     public final double reloj;
     public final int numeroConexionesDescartadas;
-    public final int getNumeroConexionesExpiradas;
+    public final int numeroConexionesExpiradas;
     public final int numeroConexionesCompletadas;
     public final Map<TipoModulo, Pair<Integer, Integer>> infoModulo;
 
@@ -17,7 +17,7 @@ public class DatosParciales {
         this.reloj = reloj;
         this.numeroConexionesCompletadas = numeroConexionesCompletadas;
         this.numeroConexionesDescartadas = numeroConexionesDescartadas;
-        this.getNumeroConexionesExpiradas = numeroConexionesExpiradas;
+        this.numeroConexionesExpiradas = numeroConexionesExpiradas;
         this.infoModulo = infoModulo;
     }
 }

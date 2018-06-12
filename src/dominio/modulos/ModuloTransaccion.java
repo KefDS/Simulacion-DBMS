@@ -33,7 +33,7 @@ public class ModuloTransaccion extends Modulo {
     public void procesarEntrada(Consulta consulta) {
         consulta.getEstadisticaConsulta().setTiempoLlegadaModulo(simulacion.getReloj());
         // Servidores disponibles?
-        if (numeroServidores > 0) {
+        if (numeroServidoresDisponibles > 0) {
             // El modulo necesita esperar que se desocupen todos los servidores
             // ya que una consulta DDL necesita correr solo, por eso aunque hayan servidores
             // disponibles, la consulta entrante debe esperar en cola
@@ -44,7 +44,7 @@ public class ModuloTransaccion extends Modulo {
                 // que va a ser atendido
                 if (consulta.getTipoConsulta() == TipoConsulta.DDL) {
                     // Todos los servidores disponibles?
-                    if (numeroServidores == numeroServidoresTotales) {
+                    if (numeroServidoresDisponibles == numeroServidoresTotales) {
                         atender(consulta);
                     } else {
                         prioridadDDL = true;
@@ -62,7 +62,7 @@ public class ModuloTransaccion extends Modulo {
     }
 
     private void atender(Consulta consulta) {
-        numeroServidores--;
+        numeroServidoresDisponibles--;
         generarSalida(consulta);
     }
 
@@ -79,7 +79,7 @@ public class ModuloTransaccion extends Modulo {
         if (colaConsultas.peek() == null) return null;
         // Consulta DDL esperando?
         if (prioridadDDL) {
-            if (numeroServidores == numeroServidoresTotales - 1) {
+            if (numeroServidoresDisponibles == numeroServidoresTotales - 1) {
                 return colaConsultas.poll();
             } else {
                 return null;
@@ -89,7 +89,7 @@ public class ModuloTransaccion extends Modulo {
             if (colaConsultas.peek().getTipoConsulta() == TipoConsulta.DDL) {
                 prioridadDDL = true;
                 // Todos los servidores libres?
-                return (numeroServidores == numeroServidoresTotales - 1) ? colaConsultas.poll() : null;
+                return (numeroServidoresDisponibles == numeroServidoresTotales - 1) ? colaConsultas.poll() : null;
             } else {
                 return colaConsultas.poll();
             }
