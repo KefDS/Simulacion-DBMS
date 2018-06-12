@@ -10,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import simulacion.estadisticas.DatosParciales;
+import simulacion.estadisticas.Resultados;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -52,6 +54,8 @@ public class IntefazGraficaController implements Initializable {
         servidoresProcesamientoSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 3));
 
         listaSpinners.forEach(IntegerStringConverter::createFor);
+
+
     }
 
 
@@ -70,6 +74,19 @@ public class IntefazGraficaController implements Initializable {
                 servidoresEjecuccionSpinner.getValue(),
                 modoLentoCheckbox.isSelected()
         );
+
+        // Anade observadores
+        ejecucionesSimulacion.addObserver(data -> {
+            Resultados resultados = (Resultados) data;
+            // TODO: Desplegar resultados de una ejecuccion
+            System.out.println("Resultados de la ejecuccion");
+        });
+
+        ejecucionesSimulacion.getSimulacion().addObserver(data -> {
+            DatosParciales datos = (DatosParciales) data;
+            // TODO: Desplegar informacion entre ticks
+        });
+
         ejecucionesSimulacion.empezarEjecucciones();
     }
 }

@@ -3,6 +3,8 @@ package simulacion;
 import dominio.Consulta;
 import dominio.modulos.*;
 import dominio.enumeraciones.TipoMudulo;
+import interfazGrafica.interfaces.Observable;
+import interfazGrafica.interfaces.Observer;
 import javafx.util.Pair;
 import simulacion.estadisticas.DatosParciales;
 import simulacion.estadisticas.Estadisticas;
@@ -12,13 +14,15 @@ import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-public class Simulacion {
+public class Simulacion implements Observable {
     private double reloj;
     private final Queue<Evento> colaEventos;
     private final Map<TipoMudulo, Modulo> modulos;
     private Estadisticas estadisticas;
     private final long tiempoTotal;
     private boolean modoLento;
+
+    private final Queue<Observer> observersQueue;
 
     public Simulacion(int tiempoTotal, int conexionesMaximas, int timeout,
                       int servidoresProcesamiento, int servidoresTransaccion,
@@ -31,6 +35,7 @@ public class Simulacion {
         inicializadorModulos(conexionesMaximas, timeout,
                 servidoresProcesamiento, servidoresTransaccion, servidoresEjecuccion);
         this.modoLento = modoLento;
+        observersQueue = new LinkedList<>();
     }
 
     private void inicializadorModulos(int conexionesMaximas, int timeout, int servidoresProcesamiento, int servidoresTransaccion, int servidoresEjecuccion) {
@@ -68,7 +73,7 @@ public class Simulacion {
                     break;
             }
             // Retorna datos por ciclo de reloj
-            DatosParciales tmp = retornarDatosParciales();
+            observersQueue.forEach(observer -> observer.notify(retornarDatosParciales()));
             pausaSimulacion(modoLento);
         }
 //        return estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(
@@ -116,5 +121,10 @@ public class Simulacion {
     // TODO: Mejor forma
     public void liberarConexion() {
         ((ModuloClientes) modulos.get(TipoMudulo.CLIENTES)).liberarConexion();
+    }
+
+    @Override
+    public void addObserver(Observer obs) {
+        observersQueue.add(obs);
     }
 }
