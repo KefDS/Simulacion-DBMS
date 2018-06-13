@@ -14,6 +14,7 @@ public class EjecucionesSimulacion implements Observable {
     private List<Resultados> resultados;
     private final int veces;
     private final Queue<Observer> observersQueue;
+    private Resultados ultimosResultados;
 
     public EjecucionesSimulacion(int veces, int tiempoTotal, int conexionesMaximas, int timeout,
                           int servidoresProcesamiento, int servidoresTransaccion,
@@ -32,13 +33,17 @@ public class EjecucionesSimulacion implements Observable {
 
     public Pair<Resultados, Double> realizarEjecucciones() {
         for(int i = 0; i < veces; i++) {
-            Resultados resultados = simulacion.realizarSimulacion();
+            ultimosResultados = simulacion.realizarSimulacion();
 
-            this.resultados.add(resultados);
-            observersQueue.forEach(observer -> observer.notify(resultados));
+            this.resultados.add(ultimosResultados);
+            observersQueue.forEach(observer -> observer.notify(this));
         }
         // TODO: Intervalo de confianza
         return new Pair<>(getPromediosTodasEjecuciones(), 0.0);
+    }
+
+    public Resultados getUltimosResultados() {
+        return ultimosResultados;
     }
 
     public double getIntervaloConfianzaTiempoVidaConexion() {

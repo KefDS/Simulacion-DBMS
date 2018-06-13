@@ -5,6 +5,10 @@ import dominio.modulos.*;
 import dominio.enumeraciones.TipoModulo;
 import interfazGrafica.interfaces.Observable;
 import interfazGrafica.interfaces.Observer;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.beans.property.ReadOnlyLongProperty;
+import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.util.Pair;
 import simulacion.estadisticas.DatosParciales;
 import simulacion.estadisticas.Estadisticas;
@@ -23,10 +27,15 @@ public class Simulacion implements Observable {
     private final Queue<Evento> colaEventos;
     private final Map<TipoModulo, Modulo> modulos;
     private Estadisticas estadisticas;
+
+    private long tiempoInicial;
     private final long tiempoTotal;
     private boolean modoLento;
 
+    private DatosParciales ultimosResultadosParciales;
     private final Queue<Observer> observersQueue;
+
+    private final ReadOnlyLongWrapper progress;
 
     public Simulacion(int tiempoTotal, int conexionesMaximas, int timeout,
                       int servidoresProcesamiento, int servidoresTransaccion,
@@ -40,6 +49,7 @@ public class Simulacion implements Observable {
                 servidoresProcesamiento, servidoresTransaccion, servidoresEjecuccion);
         this.modoLento = modoLento;
         observersQueue = new LinkedList<>();
+        progress = new ReadOnlyLongWrapper(this, "progress");
     }
 
     private void inicializadorModulos(int conexionesMaximas, int timeout, int servidoresProcesamiento,
@@ -61,7 +71,7 @@ public class Simulacion implements Observable {
     public Resultados realizarSimulacion() {
         long limiteTiempo = System.currentTimeMillis() + tiempoTotal;
         ((ModuloClientes) modulos.get(TipoModulo.CLIENTES)).generarEntrada(); // Primera llegada
-
+        tiempoInicial = System.currentTimeMillis();
         while (System.currentTimeMillis() < limiteTiempo) {
             Evento eventoActual = colaEventos.poll();
             reloj = eventoActual.getTiempoEvento();
@@ -78,11 +88,13 @@ public class Simulacion implements Observable {
                     break;
             }
             // Retorna datos por ciclo de reloj
-            observersQueue.forEach(observer -> observer.notify(retornarDatosParciales()));
+            progress.set(System.currentTimeMillis() - tiempoInicial);
+            ultimosResultadosParciales = retornarDatosParciales();
+            observersQueue.forEach(observer -> observer.notify(this));
             pausaSimulacion(modoLento);
         }
 
-        Resultados resultados =  estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(
+        Resultados resultados = estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey,
                 entry -> entry.getValue().getEstadisticasModulo()
         )));
@@ -104,6 +116,10 @@ public class Simulacion implements Observable {
                 informacionPorModulo);
     }
 
+    public DatosParciales getUltimosResultadosParciales() {
+        return ultimosResultadosParciales;
+    }
+
     private void pausaSimulacion(boolean modoLento) {
         if (modoLento) {
             try {
@@ -116,6 +132,14 @@ public class Simulacion implements Observable {
 
     public double getReloj() {
         return reloj;
+    }
+
+    public ReadOnlyLongProperty getProgressProperty() {
+        return progress.getReadOnlyProperty();
+    }
+
+    public long getTiempoTotal() {
+        return tiempoTotal;
     }
 
     public void anadirEvento(Evento evento) {

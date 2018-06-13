@@ -11,6 +11,7 @@ import simulacion.EjecucionesSimulacion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import simulacion.Simulacion;
 import simulacion.estadisticas.DatosParciales;
 import simulacion.estadisticas.Resultados;
 
@@ -71,6 +72,8 @@ public class IntefazGraficaController implements Initializable {
     private Label ejecuccionNumServ;
     @FXML
     private Label ejecuccionCola;
+    @FXML
+    private ProgressBar estatusTiempo;
 
     // Resultados
     @FXML
@@ -93,7 +96,7 @@ public class IntefazGraficaController implements Initializable {
     private List<Spinner<Integer>> listaSpinners;
 
     // Bandera para no sobrecargar envio de datos al hilo del GUI
-    final AtomicInteger count = new AtomicInteger(-1);
+    private final AtomicInteger count = new AtomicInteger(-1);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -126,17 +129,26 @@ public class IntefazGraficaController implements Initializable {
         Task<Pair<Resultados, Double>> task = new Task<Pair<Resultados, Double>>() {
             @Override
             protected Pair<Resultados, Double> call() throws Exception {
+                Simulacion simulacion = ejecucionesSimulacion.getSimulacion();
+                simulacion.getProgressProperty().addListener((obs, oldProgress, newProgress) ->
+                        updateProgress((Long) newProgress, simulacion.getTiempoTotal())
+                );
                 return ejecucionesSimulacion.realizarEjecucciones();
             }
         };
 
+        ejecucionesSimulacion.getSimulacion().addObserver(simulacion -> {
+
+        });
+
         Thread thread = new Thread(task);
+        estatusTiempo.progressProperty().bind(task.progressProperty());
         thread.start();
     }
 
     private Observer observadorFinalCadaEjecuccion() {
-        return data -> {
-            Resultados resultados = (Resultados) data;
+        return ejecuccionSimulacion -> {
+            Resultados resultados = ((EjecucionesSimulacion) ejecuccionSimulacion).getUltimosResultados();
 
             Platform.runLater(() -> {
                 promVidaConex.setText(Long.toString(Math.round(resultados.tiempoPromedioVidaConexion)) + " ms");
@@ -153,8 +165,8 @@ public class IntefazGraficaController implements Initializable {
     }
 
     private Observer observadorFinalCadaTick() {
-        return data -> {
-            DatosParciales datos = (DatosParciales) data;
+        return simulacion -> {
+            DatosParciales datos = ((Simulacion) simulacion).getUltimosResultadosParciales();
             // Truco para no atestar la cola de tareas asincronas por hacer
             if (count.getAndSet(1) == -1) {
                 Platform.runLater(() -> {
