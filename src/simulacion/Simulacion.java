@@ -87,11 +87,11 @@ public class Simulacion implements Observable {
                     eventoActual.getConsulta().getModuloActual().procesarTimeout(eventoActual.getConsulta());
                     break;
             }
-            // Retorna datos por ciclo de reloj
-            progress.set(System.currentTimeMillis() - tiempoInicial);
             ultimosResultadosParciales = retornarDatosParciales();
             observersQueue.forEach(observer -> observer.notify(this));
             pausaSimulacion(modoLento);
+            // Retorna datos por ciclo de reloj
+            progress.set(System.currentTimeMillis() - tiempoInicial);
         }
 
         Resultados resultados = estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(

@@ -9,22 +9,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class EjecucionesSimulacion implements Observable {
+public class EjecutorSimulacion implements Observable {
     private final Simulacion simulacion;
     private List<Resultados> resultados;
     private final int veces;
     private final Queue<Observer> observersQueue;
     private Resultados ultimosResultados;
+    private int numeroEjecuccion;
 
-    public EjecucionesSimulacion(int veces, int tiempoTotal, int conexionesMaximas, int timeout,
-                          int servidoresProcesamiento, int servidoresTransaccion,
-                          int servidoresEjecuccion, boolean modoLento) {
+    public EjecutorSimulacion(int veces, int tiempoTotal, int conexionesMaximas, int timeout,
+                              int servidoresProcesamiento, int servidoresTransaccion,
+                              int servidoresEjecuccion, boolean modoLento) {
         this.veces = veces;
         simulacion = new Simulacion(tiempoTotal, conexionesMaximas, timeout,
                 servidoresProcesamiento, servidoresTransaccion,
                 servidoresEjecuccion, modoLento);
         resultados = new LinkedList<>();
         observersQueue = new LinkedList<>();
+        numeroEjecuccion = 0;
     }
 
     public Simulacion getSimulacion() {
@@ -36,14 +38,19 @@ public class EjecucionesSimulacion implements Observable {
             ultimosResultados = simulacion.realizarSimulacion();
 
             this.resultados.add(ultimosResultados);
+            numeroEjecuccion = i + 1;
             observersQueue.forEach(observer -> observer.notify(this));
         }
         // TODO: Intervalo de confianza
-        return new Pair<>(getPromediosTodasEjecuciones(), 0.0);
+        return new Pair<>(getPromediosTodasEjecuciones(), 2.0);
     }
 
     public Resultados getUltimosResultados() {
         return ultimosResultados;
+    }
+
+    public int getNumeroEjecuccion() {
+        return numeroEjecuccion;
     }
 
     public double getIntervaloConfianzaTiempoVidaConexion() {

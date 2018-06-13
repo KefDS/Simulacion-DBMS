@@ -33,7 +33,7 @@
                                       <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
                                   </textFill>
                            <VBox.margin>
-                              <Insets bottom="60.0" />
+                              <Insets bottom="30.0" />
                            </VBox.margin>
                               </Label>
                                 <GridPane hgap="12.0" minWidth="-Infinity" vgap="20.0">
@@ -355,9 +355,9 @@
                     <children>
                   <VBox layoutX="4.0" layoutY="14.0" prefHeight="422.0" prefWidth="367.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                              <Label alignment="CENTER" font="$x1" style="&#10;" text="Resultados" textAlignment="CENTER" textFill="$x2" wrapText="false">
+                              <Label fx:id="resultadosLabel" alignment="CENTER" font="$x1" style="&#10;" text="Resultados" textAlignment="CENTER" textFill="$x2" wrapText="false">
                            <VBox.margin>
-                              <Insets bottom="60.0" />
+                              <Insets bottom="30.0" />
                            </VBox.margin>
                         </Label>
                         <GridPane alignment="CENTER" hgap="8.0" maxWidth="1.7976931348623157E308" vgap="10.0">
