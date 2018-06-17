@@ -5,7 +5,6 @@ import dominio.enumeraciones.TipoModulo;
 import interfazGrafica.bibliotecas.IntegerStringConverter;
 import interfazGrafica.interfaces.Observer;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,20 +15,17 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 import simulacion.EjecutorSimulacion;
 import simulacion.Simulacion;
 import simulacion.estadisticas.DatosParciales;
 import simulacion.estadisticas.Resultados;
 
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class IntefazGraficaController implements Initializable {
     // Parametros
@@ -166,10 +162,16 @@ public class IntefazGraficaController implements Initializable {
             }
         };
 
+        // Callback final de ejecucion
         task.valueProperty().addListener((obs, oldvalue, newValue) -> {
-            // TODO: Resultados Finales
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             resultadosLabel.setText("Resultados Finales");
             deshabilitacionControlesParamteros(false);
+            setResultadosEjecucion(newValue.getKey());
         });
 
         Thread thread = new Thread(task);
