@@ -16,7 +16,7 @@ public class ValoresAleatorios {
         distribucionTipoConsulta.put(TipoConsulta.DDL, (double) 1);
     }
 
-    private static Random rand = new Random(9432);
+    private static Random rand = new Random();
 
     public static double generarValorDistribucionNormal(int media, double desviacionEstandar) {
         return Math.abs(rand.nextGaussian() * media + desviacionEstandar);

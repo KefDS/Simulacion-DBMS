@@ -28,7 +28,6 @@ public class Simulacion implements Observable {
     private final Map<TipoModulo, Modulo> modulos;
     private Estadisticas estadisticas;
 
-    private long tiempoInicial;
     private final long tiempoTotal;
     private boolean modoLento;
 
@@ -71,7 +70,10 @@ public class Simulacion implements Observable {
     public Resultados realizarSimulacion() {
         long limiteTiempo = System.currentTimeMillis() + tiempoTotal;
         ((ModuloClientes) modulos.get(TipoModulo.CLIENTES)).generarEntrada(); // Primera llegada
-        tiempoInicial = System.currentTimeMillis();
+
+        long tiempoInicial = System.currentTimeMillis();
+        progress.set(System.currentTimeMillis() - tiempoInicial);
+
         while (System.currentTimeMillis() < limiteTiempo) {
             Evento eventoActual = colaEventos.poll();
             reloj = eventoActual.getTiempoEvento();
@@ -87,17 +89,17 @@ public class Simulacion implements Observable {
                     eventoActual.getConsulta().getModuloActual().procesarTimeout(eventoActual.getConsulta());
                     break;
             }
+
             ultimosResultadosParciales = retornarDatosParciales();
             observersQueue.forEach(observer -> observer.notify(this));
+
             pausaSimulacion(modoLento);
-            // Retorna datos por ciclo de reloj
             progress.set(System.currentTimeMillis() - tiempoInicial);
         }
 
         Resultados resultados = estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey,
-                entry -> entry.getValue().getEstadisticasModulo()
-        )));
+                entry -> entry.getValue().getEstadisticasModulo())));
 
         limpiarSimulacion();
         modulos.forEach((tipoModulo, modulo) -> modulo.limpiarModulo());
@@ -130,9 +132,7 @@ public class Simulacion implements Observable {
         }
     }
 
-    public double getReloj() {
-        return reloj;
-    }
+    public double getReloj() { return reloj; }
 
     public ReadOnlyLongProperty getProgressProperty() {
         return progress.getReadOnlyProperty();

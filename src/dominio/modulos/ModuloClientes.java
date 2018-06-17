@@ -23,7 +23,6 @@ public class ModuloClientes extends Modulo {
 
     @Override
     public void procesarEntrada(Consulta consulta) {
-        // TODO: mejorar logica
         // Nota: Para no romper la interface, la entrada que le envia
         // modulo ejecucion sera procesada aqui tambien
         if (consulta.getNumeroBloques() == -1) {
@@ -38,10 +37,10 @@ public class ModuloClientes extends Modulo {
             }
             generarEntrada();
         } else {
+            consulta.getEstadisticaConsulta().setTiempoLlegadaModulo(simulacion.getReloj());
+            consulta.setModuloActual(this);
             generarSalida(consulta);
         }
-
-
     }
 
     public void generarEntrada() {
@@ -54,6 +53,8 @@ public class ModuloClientes extends Modulo {
 
     @Override
     public void procesarSalida(Consulta consulta) {
+        estadisticasModulo.anadirTiempoServicio(consulta.getTipoConsulta(),
+                consulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
         simulacion.getEstadisticas().anadirNumeroConexionesCompletadas();
         simulacion.getEstadisticas().anadirTiempoConsultaFinalizada(
                 consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
@@ -64,8 +65,7 @@ public class ModuloClientes extends Modulo {
 
     @Override
     protected double getTiempoSalida(Consulta consulta) {
-        // TODO: Numero de bloques es discreto?
-        return Math.round(((double) consulta.getNumeroBloques()) / 64) * 1000;
+        return (double) consulta.getNumeroBloques() / 64 * 1000;
     }
 
     private void generarTimeout(Consulta consulta) {

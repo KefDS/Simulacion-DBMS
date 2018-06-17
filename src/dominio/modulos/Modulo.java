@@ -16,7 +16,7 @@ public abstract class Modulo {
     Modulo siguienteModulo;
     int numeroServidoresDisponibles;
     protected final int numeroServidoresTotales;
-    private EstadisticasModulo estadisticasModulo;
+    protected EstadisticasModulo estadisticasModulo;
 
     public Modulo(Simulacion simulacion, int numeroServidores) {
         this.simulacion = simulacion;
@@ -34,6 +34,7 @@ public abstract class Modulo {
 
     public void procesarEntrada(Consulta consulta) {
         consulta.getEstadisticaConsulta().setTiempoLlegadaModulo(simulacion.getReloj());
+        consulta.setModuloActual(this);
         // Servidores disponibles?
         if (numeroServidoresDisponibles > 0) {
             numeroServidoresDisponibles--;
@@ -98,7 +99,7 @@ public abstract class Modulo {
         }
     }
 
-    private void terminarConsulta(Consulta consulta) {
+    protected void terminarConsulta(Consulta consulta) {
         simulacion.getEstadisticas().anadirNumeroConexionesExpiradas();
         simulacion.getEstadisticas().anadirTiempoConsultaFinalizada(
                 consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
