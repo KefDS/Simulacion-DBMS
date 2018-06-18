@@ -5,8 +5,6 @@ import dominio.modulos.*;
 import dominio.enumeraciones.TipoModulo;
 import interfazGrafica.interfaces.Observable;
 import interfazGrafica.interfaces.Observer;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.util.Pair;
@@ -31,10 +29,9 @@ public class Simulacion implements Observable {
     private final long tiempoTotal;
     private boolean modoLento;
 
-    private DatosParciales ultimosResultadosParciales;
-    private final Queue<Observer> observersQueue;
-
+    private DatosParciales resultadosParcialesMasRecientes;
     private final ReadOnlyLongWrapper progress;
+    private final Queue<Observer> observadores;
 
     public Simulacion(int tiempoTotal, int conexionesMaximas, int timeout,
                       int servidoresProcesamiento, int servidoresTransaccion,
@@ -47,12 +44,13 @@ public class Simulacion implements Observable {
         inicializadorModulos(conexionesMaximas, timeout,
                 servidoresProcesamiento, servidoresTransaccion, servidoresEjecuccion);
         this.modoLento = modoLento;
-        observersQueue = new LinkedList<>();
+        observadores = new LinkedList<>();
         progress = new ReadOnlyLongWrapper(this, "progress");
     }
 
     private void inicializadorModulos(int conexionesMaximas, int timeout, int servidoresProcesamiento,
                                       int servidoresTransaccion, int servidoresEjecuccion) {
+
         Modulo moduloClientes = new ModuloClientes(this, conexionesMaximas, timeout);
         Modulo moduloEjecucion = new ModuloEjecucion(this, moduloClientes, servidoresEjecuccion); // 5
         Modulo moduloTransaccion = new ModuloTransaccion(this, moduloEjecucion, servidoresTransaccion); // 4
@@ -68,13 +66,10 @@ public class Simulacion implements Observable {
     }
 
     public Resultados realizarSimulacion() {
-        long limiteTiempo = System.currentTimeMillis() + tiempoTotal;
         ((ModuloClientes) modulos.get(TipoModulo.CLIENTES)).generarEntrada(); // Primera llegada
+        progress.set((long) reloj);
 
-        long tiempoInicial = System.currentTimeMillis();
-        progress.set(System.currentTimeMillis() - tiempoInicial);
-
-        while (System.currentTimeMillis() < limiteTiempo) {
+        while (colaEventos.peek().getTiempoEvento() < tiempoTotal) {
             Evento eventoActual = colaEventos.poll();
             reloj = eventoActual.getTiempoEvento();
 
@@ -90,16 +85,21 @@ public class Simulacion implements Observable {
                     break;
             }
 
-            ultimosResultadosParciales = retornarDatosParciales();
-            observersQueue.forEach(observer -> observer.notify(this));
+            resultadosParcialesMasRecientes = retornarDatosParciales();
+            observadores.forEach(observer -> observer.notify(this));
 
             pausaSimulacion(modoLento);
-            progress.set(System.currentTimeMillis() - tiempoInicial);
+            progress.set((long) reloj);
         }
 
         Resultados resultados = estadisticas.obtenerResultados(modulos.entrySet().stream().collect(Collectors.toMap(
                 Map.Entry::getKey,
                 entry -> entry.getValue().getEstadisticasModulo())));
+
+        // Envia ultimos datos parciales
+        observadores.forEach(observer -> observer.notify(this));
+        // Completa barra
+        progress.set(tiempoTotal);
 
         limpiarSimulacion();
         modulos.forEach((tipoModulo, modulo) -> modulo.limpiarModulo());
@@ -118,8 +118,8 @@ public class Simulacion implements Observable {
                 informacionPorModulo);
     }
 
-    public DatosParciales getUltimosResultadosParciales() {
-        return ultimosResultadosParciales;
+    public DatosParciales getResultadosParcialesMasRecientes() {
+        return resultadosParcialesMasRecientes;
     }
 
     private void pausaSimulacion(boolean modoLento) {
@@ -166,6 +166,6 @@ public class Simulacion implements Observable {
 
     @Override
     public void addObserver(Observer obs) {
-        observersQueue.add(obs);
+        observadores.add(obs);
     }
 }

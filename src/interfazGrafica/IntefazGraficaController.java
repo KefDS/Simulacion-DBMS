@@ -16,7 +16,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.util.Pair;
 import simulacion.EjecutorSimulacion;
 import simulacion.Simulacion;
 import simulacion.estadisticas.DatosParciales;
@@ -137,12 +136,12 @@ public class IntefazGraficaController implements Initializable {
         asociaConsultaTab.put(TipoConsulta.JOIN, join);
         asociaConsultaTab.put(TipoConsulta.DDL, ddl);
 
-        numeroEjecucciones.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 3));
-        duracionSegSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10000, 5));
-        timeoutSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 10));
+        numeroEjecucciones.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 30));
+        duracionSegSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000000, 15000));
+        timeoutSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 10));
         servidoresTransaccionesSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 2));
         servidoresEjecuccionSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 2));
-        conexionesMaximasSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 10));
+        conexionesMaximasSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 10));
         servidoresProcesamientoSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 2));
 
         listaSpinners.forEach(IntegerStringConverter::createFor);
@@ -173,12 +172,6 @@ public class IntefazGraficaController implements Initializable {
 
         // Callback final de ejecucion
         task.valueProperty().addListener((obs, oldvalue, resultadosFinales) -> {
-            // Duerme el hilo, para porder observar los datos de la ultima ejecuccion
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             resultadosLabel.setText("Resultados Finales");
             deshabilitacionControlesParamteros(false);
             setResultadosEjecucion(resultadosFinales);
@@ -197,7 +190,7 @@ public class IntefazGraficaController implements Initializable {
             Resultados resultados = ((EjecutorSimulacion) ejecuccionSimulacion).getUltimosResultados();
 
             Platform.runLater(() -> {
-                resultadosLabel.setText("Resultados de ejecucción número " + ((EjecutorSimulacion) ejecuccionSimulacion).getNumeroEjecuccion());
+                resultadosLabel.setText("Resultados de Ejecucción Número " + ((EjecutorSimulacion) ejecuccionSimulacion).getNumeroEjecuccion());
                 setResultadosEjecucion(resultados);
             });
         };
@@ -269,7 +262,7 @@ public class IntefazGraficaController implements Initializable {
 
     private Observer observadorFinalCadaTick() {
         return simulacion -> {
-            DatosParciales datos = ((Simulacion) simulacion).getUltimosResultadosParciales();
+            DatosParciales datos = ((Simulacion) simulacion).getResultadosParcialesMasRecientes();
             // Truco para no atestar la cola de tareas asincronas por hacer
             if (count.getAndSet(1) == -1) {
                 Platform.runLater(() -> {

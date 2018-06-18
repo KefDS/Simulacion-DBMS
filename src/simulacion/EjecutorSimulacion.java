@@ -47,7 +47,10 @@ public class EjecutorSimulacion implements Observable {
             numeroEjecuccion = i + 1;
             observersQueue.forEach(observer -> observer.notify(this));
         }
-        return new ResultadosFinales(getPromediosTodasEjecuciones(), getIntervaloConfianzaTiempoVidaConexion());
+
+        // Si se corre una sola vez, la tabla t-student se cae
+        return veces == 1 ? new ResultadosFinales(ultimosResultados, new Pair<>(0.0, 0.0)) :
+                new ResultadosFinales(getPromediosTodasEjecuciones(), getIntervaloConfianzaTiempoVidaConexion());
     }
 
     public Resultados getUltimosResultados() {
