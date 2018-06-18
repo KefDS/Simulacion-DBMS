@@ -1,22 +1,25 @@
 package simulacion.estadisticas;
 
-import dominio.modulos.Modulo;
-import dominio.enumeraciones.TipoMudulo;
+import dominio.enumeraciones.TipoConsulta;
+import dominio.enumeraciones.TipoModulo;
 import simulacion.PromedioTiempo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Estadisticas {
-    private List<Estadistica> listaEstadisticas;
+    private double lambda;
     private PromedioTiempo promedioVidaConexion;
     private int numeroConexionesDescartadas;
+    private int numeroConexionesExpiradas;
+    private int numeroConexionesCompletadas;
 
     public Estadisticas() {
-        listaEstadisticas = new ArrayList<Estadistica>();
+        lambda = 0.0005;
         promedioVidaConexion = new PromedioTiempo();
         numeroConexionesDescartadas = 0;
+        numeroConexionesExpiradas = 0;
+        numeroConexionesCompletadas = 0;
     }
 
     public void anadirTiempoConsultaFinalizada(double tiempo) {
@@ -27,18 +30,40 @@ public class Estadisticas {
         numeroConexionesDescartadas++;
     }
 
-    public Estadistica obtenerEstadistica(Map<TipoMudulo, Modulo> modulos) {
-        // TODO
-        return null;
+    public int getNumeroConexionesDescartadas() {
+        return numeroConexionesDescartadas;
     }
 
-    public double getIntervaloConfianzaTiempoVidaConexion() {
-        // TODO
-        return 0;
+    public int getNumeroConexionesExpiradas() {
+        return numeroConexionesExpiradas;
     }
 
-    public Estadistica getPromediosTodasEjecuciones() {
-        // TODO
-        return null;
+    public void anadirNumeroConexionesExpiradas() {
+        this.numeroConexionesExpiradas++;
+    }
+
+    public int getNumeroConexionesCompletadas() {
+        return numeroConexionesCompletadas;
+    }
+
+    public void anadirNumeroConexionesCompletadas() {
+        this.numeroConexionesCompletadas++;
+    }
+
+    public Resultados obtenerResultados(Map<TipoModulo, EstadisticasModulo> estadisticasModulos) {
+        // TODO: Tamano promedio en cola se debe dar en numero entero?
+        Map<TipoModulo, Integer> tamanoPromedioCola = estadisticasModulos.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> (int) Math.ceil(entry.getValue().sacarTiempoPromedioCola() * lambda)
+                ));
+
+        Map<TipoModulo, Map<TipoConsulta, Double>> tiempoPromedioConsultaPorModulo = new EnumMap<>(TipoModulo.class);
+        Arrays.stream(TipoModulo.values()).forEach(tipo ->
+                tiempoPromedioConsultaPorModulo.put(tipo, estadisticasModulos.get(tipo).sacarTiempoServicioTipoConsulta()));
+
+        return new Resultados(getNumeroConexionesCompletadas(), getNumeroConexionesDescartadas(),
+                getNumeroConexionesExpiradas(), promedioVidaConexion.getPromedio(),
+                tamanoPromedioCola, tiempoPromedioConsultaPorModulo);
     }
 }

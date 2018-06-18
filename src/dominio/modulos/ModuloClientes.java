@@ -1,10 +1,10 @@
 package dominio.modulos;
 
 import dominio.Consulta;
-import simulacion.Simulacion;
-import simulacion.enumeraciones.TipoEvento;
 import simulacion.Evento;
+import simulacion.Simulacion;
 import simulacion.ValoresAleatorios;
+import simulacion.enumeraciones.TipoEvento;
 
 public class ModuloClientes extends Modulo {
 
@@ -23,13 +23,12 @@ public class ModuloClientes extends Modulo {
 
     @Override
     public void procesarEntrada(Consulta consulta) {
-        // TODO: mejorar logica
         // Nota: Para no romper la interface, la entrada que le envia
         // modulo ejecucion sera procesada aqui tambien
         if (consulta.getNumeroBloques() == -1) {
             // Servidores disponibles?
-            if (numeroServidores > 0) {
-                numeroServidores--;
+            if (numeroServidoresDisponibles > 0) {
+                numeroServidoresDisponibles--;
                 generarTimeout(consulta);
                 siguienteModulo.procesarEntrada(consulta);
             } else {
@@ -38,10 +37,9 @@ public class ModuloClientes extends Modulo {
             }
             generarEntrada();
         } else {
+            consulta.setModuloActual(this);
             generarSalida(consulta);
         }
-
-
     }
 
     public void generarEntrada() {
@@ -52,9 +50,13 @@ public class ModuloClientes extends Modulo {
         simulacion.anadirEvento(new Evento(tiempo, this, TipoEvento.LLEGADA, consulta));
     }
 
-
     @Override
     public void procesarSalida(Consulta consulta) {
+        // Se toma el tiempo desde que entró al sistema, por eso se toma el tiempo de inicio
+        estadisticasModulo.anadirTiempoServicio(consulta.getTipoConsulta(),
+                consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
+
+        simulacion.getEstadisticas().anadirNumeroConexionesCompletadas();
         simulacion.getEstadisticas().anadirTiempoConsultaFinalizada(
                 consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
         // Borra evento TIMEOUT de la cola eventos
@@ -64,8 +66,7 @@ public class ModuloClientes extends Modulo {
 
     @Override
     protected double getTiempoSalida(Consulta consulta) {
-        // TODO: Numero de bloques es discreto?
-        return (((double) consulta.getNumeroBloques()) / 64) * 1000;
+        return (double) consulta.getNumeroBloques() / 64 * 1000;
     }
 
     private void generarTimeout(Consulta consulta) {
@@ -77,6 +78,6 @@ public class ModuloClientes extends Modulo {
     }
 
     public void liberarConexion() {
-        numeroServidores++;
+        numeroServidoresDisponibles++;
     }
 }

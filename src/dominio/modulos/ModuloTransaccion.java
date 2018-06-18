@@ -10,12 +10,10 @@ import java.util.PriorityQueue;
 public class ModuloTransaccion extends Modulo {
 
     private boolean prioridadDDL;
-    private int numeroServidoresTotal;
 
     public ModuloTransaccion(Simulacion simulacion, Modulo siguienteModulo, int numeroServidores) {
         super(simulacion, siguienteModulo, numeroServidores);
         prioridadDDL = false;
-        numeroServidoresTotal = numeroServidores;
 
         colaConsultas = new PriorityQueue<>((consulta1, consulta2) -> {
             if (consulta1.getTipoConsulta() == TipoConsulta.DDL) {
@@ -34,10 +32,11 @@ public class ModuloTransaccion extends Modulo {
     @Override
     public void procesarEntrada(Consulta consulta) {
         consulta.getEstadisticaConsulta().setTiempoLlegadaModulo(simulacion.getReloj());
+        consulta.setModuloActual(this);
         // Servidores disponibles?
-        if (numeroServidores > 0) {
+        if (numeroServidoresDisponibles > 0) {
             // El modulo necesita esperar que se desocupen todos los servidores
-            // ya que una consulta DDL necesita correr solo, por eso aunque hayan servidores
+            // ya que una consulta DDL necesita correr sola, por eso aunque hayan servidores
             // disponibles, la consulta entrante debe esperar en cola
             if (prioridadDDL) {
                 colaConsultas.add(consulta);
@@ -45,11 +44,12 @@ public class ModuloTransaccion extends Modulo {
                 // Si la consulta entrante es un DDL, debe fijarse si es el unico
                 // que va a ser atendido
                 if (consulta.getTipoConsulta() == TipoConsulta.DDL) {
+                    prioridadDDL = true;
                     // Todos los servidores disponibles?
-                    if (numeroServidores == numeroServidoresTotal) {
+                    if (numeroServidoresDisponibles == numeroServidoresTotales) {
                         atender(consulta);
                     } else {
-                        prioridadDDL = true;
+                        // Se agrega a la cola, con la prioridad DDL
                         colaConsultas.add(consulta);
                     }
                 }
@@ -64,7 +64,7 @@ public class ModuloTransaccion extends Modulo {
     }
 
     private void atender(Consulta consulta) {
-        numeroServidores--;
+        numeroServidoresDisponibles--;
         generarSalida(consulta);
     }
 
@@ -79,19 +79,22 @@ public class ModuloTransaccion extends Modulo {
     @Override
     protected Consulta getSiguienteConsulta() {
         if (colaConsultas.peek() == null) return null;
-        // Consulta DDL esperando?
+        // Consulta DDL esperando en cola?
         if (prioridadDDL) {
-            if (numeroServidores == numeroServidoresTotal - 1) {
+            // Todos los servidores disponibles?
+            if (numeroServidoresDisponibles == numeroServidoresTotales - 1) {
                 return colaConsultas.poll();
             } else {
                 return null;
             }
         } else {
+            // Nota: Si la consulta que acaba de salir era un DDL, desactivó la prioridad
+            // por lo que se debe preguntar si el siguiente es un DDL
             // Siguiente consulta es DDL?
             if (colaConsultas.peek().getTipoConsulta() == TipoConsulta.DDL) {
                 prioridadDDL = true;
                 // Todos los servidores libres?
-                return (numeroServidores == numeroServidoresTotal - 1) ? colaConsultas.poll() : null;
+                return (numeroServidoresDisponibles == numeroServidoresTotales - 1) ? colaConsultas.poll() : null;
             } else {
                 return colaConsultas.poll();
             }
@@ -101,7 +104,7 @@ public class ModuloTransaccion extends Modulo {
     @Override
     protected double getTiempoSalida(Consulta consulta) {
         int numeroBloques = 0;
-        double tiempo = numeroServidoresTotal * 30;
+        double tiempo = numeroServidoresTotales * 30;
         if (consulta.getTipoConsulta() == TipoConsulta.JOIN) {
             numeroBloques = (int) Math.round(ValoresAleatorios.generarValorDistribucionUniforme(1, 64));
         } else if (consulta.getTipoConsulta() == TipoConsulta.SELECT) {
@@ -110,5 +113,19 @@ public class ModuloTransaccion extends Modulo {
         tiempo += numeroBloques * 100;
         consulta.setNumeroBloques(numeroBloques);
         return tiempo;
+    }
+
+    @Override
+    protected void terminarConsulta(Consulta consulta) {
+        // Si la consulta que va a ser sacada del sistema es un DDL
+        // se elimina la prioridad de DDL que tenia el sistema
+        if(consulta.getTipoConsulta() == TipoConsulta.DDL) prioridadDDL = false;
+        super.terminarConsulta(consulta);
+    }
+
+    @Override
+    public void limpiarModulo() {
+        prioridadDDL = false;
+        super.limpiarModulo();
     }
 }

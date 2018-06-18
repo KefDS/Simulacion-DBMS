@@ -8,9 +8,7 @@ public enum TipoConsulta {
 
     private final boolean esReadOnly;
 
-    TipoConsulta(boolean esReadOnly) {
-        this.esReadOnly = esReadOnly;
-    }
+    TipoConsulta(boolean esReadOnly) { this.esReadOnly = esReadOnly; }
 
     public boolean esReadOnly() {
         return esReadOnly;

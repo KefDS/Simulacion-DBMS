@@ -1,6 +1,7 @@
 package dominio.modulos;
 
 import dominio.Consulta;
+import javafx.util.Pair;
 import simulacion.Simulacion;
 import simulacion.enumeraciones.TipoEvento;
 import simulacion.estadisticas.EstadisticasModulo;
@@ -11,14 +12,16 @@ import java.util.Queue;
 
 public abstract class Modulo {
     protected final Simulacion simulacion;
-    protected Queue<Consulta> colaConsultas;
+    Queue<Consulta> colaConsultas;
     Modulo siguienteModulo;
-    int numeroServidores;
-    private EstadisticasModulo estadisticasModulo;
+    int numeroServidoresDisponibles;
+    protected final int numeroServidoresTotales;
+    protected EstadisticasModulo estadisticasModulo;
 
     public Modulo(Simulacion simulacion, int numeroServidores) {
         this.simulacion = simulacion;
-        this.numeroServidores = numeroServidores;
+        numeroServidoresTotales = numeroServidores;
+        numeroServidoresDisponibles = numeroServidores;
 
         estadisticasModulo = new EstadisticasModulo();
         colaConsultas = new LinkedList<>();
@@ -31,9 +34,10 @@ public abstract class Modulo {
 
     public void procesarEntrada(Consulta consulta) {
         consulta.getEstadisticaConsulta().setTiempoLlegadaModulo(simulacion.getReloj());
+        consulta.setModuloActual(this);
         // Servidores disponibles?
-        if (numeroServidores > 0) {
-            numeroServidores--;
+        if (numeroServidoresDisponibles > 0) {
+            numeroServidoresDisponibles--;
             generarSalida(consulta);
         } else {
             colaConsultas.add(consulta);
@@ -57,7 +61,7 @@ public abstract class Modulo {
                     siguienteConsulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
             generarSalida(siguienteConsulta);
         } else {
-            numeroServidores++;
+            numeroServidoresDisponibles++;
         }
     }
 
@@ -95,8 +99,8 @@ public abstract class Modulo {
         }
     }
 
-    private void terminarConsulta(Consulta consulta) {
-        simulacion.getEstadisticas().anadirConexionDescartada();
+    protected void terminarConsulta(Consulta consulta) {
+        simulacion.getEstadisticas().anadirNumeroConexionesExpiradas();
         simulacion.getEstadisticas().anadirTiempoConsultaFinalizada(
                 consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
         simulacion.liberarConexion();
@@ -109,5 +113,11 @@ public abstract class Modulo {
     public void limpiarModulo() {
         colaConsultas.clear();
         estadisticasModulo = new EstadisticasModulo();
+        numeroServidoresDisponibles = numeroServidoresTotales;
+    }
+
+    public Pair<Integer, Integer> datosActuales() {
+        // Pair<Consultas siendo atendidas, Tamano de la cola>
+        return new Pair<>(numeroServidoresTotales - numeroServidoresDisponibles, colaConsultas.size());
     }
 }
