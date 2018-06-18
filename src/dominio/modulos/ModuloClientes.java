@@ -1,10 +1,10 @@
 package dominio.modulos;
 
 import dominio.Consulta;
-import simulacion.Simulacion;
-import simulacion.enumeraciones.TipoEvento;
 import simulacion.Evento;
+import simulacion.Simulacion;
 import simulacion.ValoresAleatorios;
+import simulacion.enumeraciones.TipoEvento;
 
 public class ModuloClientes extends Modulo {
 
@@ -37,7 +37,6 @@ public class ModuloClientes extends Modulo {
             }
             generarEntrada();
         } else {
-            consulta.getEstadisticaConsulta().setTiempoLlegadaModulo(simulacion.getReloj());
             consulta.setModuloActual(this);
             generarSalida(consulta);
         }
@@ -53,8 +52,10 @@ public class ModuloClientes extends Modulo {
 
     @Override
     public void procesarSalida(Consulta consulta) {
+        // Se toma el tiempo desde que entró al sistema, por eso se toma el tiempo de inicio
         estadisticasModulo.anadirTiempoServicio(consulta.getTipoConsulta(),
-                consulta.getEstadisticaConsulta().getTiempoDesdeLlegadaModulo(simulacion.getReloj()));
+                consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
+
         simulacion.getEstadisticas().anadirNumeroConexionesCompletadas();
         simulacion.getEstadisticas().anadirTiempoConsultaFinalizada(
                 consulta.getEstadisticaConsulta().getTiempoDeVida(simulacion.getReloj()));
