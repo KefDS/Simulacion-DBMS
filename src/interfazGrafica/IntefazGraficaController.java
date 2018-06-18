@@ -15,11 +15,13 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 import simulacion.EjecutorSimulacion;
 import simulacion.Simulacion;
 import simulacion.estadisticas.DatosParciales;
 import simulacion.estadisticas.Resultados;
+import simulacion.estadisticas.ResultadosFinales;
 
 import java.net.URL;
 import java.util.*;
@@ -110,6 +112,10 @@ public class IntefazGraficaController implements Initializable {
     private AnchorPane join;
     @FXML
     private AnchorPane ddl;
+    @FXML
+    private GridPane intervaloConfianzaPane;
+    @FXML
+    private Label intevaloConfianzaLabel;
 
     private List<Spinner<Integer>> listaSpinners;
     private Map<TipoConsulta, AnchorPane> asociaConsultaTab;
@@ -121,6 +127,9 @@ public class IntefazGraficaController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         listaSpinners = Arrays.asList(numeroEjecucciones, duracionSegSpinner, timeoutSpinner,
                 conexionesMaximasSpinner, servidoresProcesamientoSpinner, servidoresTransaccionesSpinner, servidoresEjecuccionSpinner);
+
+        intervaloConfianzaPane.managedProperty().bind(intervaloConfianzaPane.visibleProperty());
+        intervaloConfianzaPane.setVisible(false);
 
         asociaConsultaTab = new EnumMap<>(TipoConsulta.class);
         asociaConsultaTab.put(TipoConsulta.SELECT, select);
@@ -139,8 +148,8 @@ public class IntefazGraficaController implements Initializable {
         listaSpinners.forEach(IntegerStringConverter::createFor);
     }
 
-
     public void handleEmpezarSimulacion(ActionEvent actionEvent) {
+        intervaloConfianzaPane.setVisible(false);
         deshabilitacionControlesParamteros(true);
 
         EjecutorSimulacion ejecutorSimulacion = creaEjecucionesSimulacion();
@@ -151,9 +160,9 @@ public class IntefazGraficaController implements Initializable {
         // Observador cada final de reloj
         ejecutorSimulacion.getSimulacion().addObserver(observadorFinalCadaTick());
 
-        Task<Pair<Resultados, Double>> task = new Task<Pair<Resultados, Double>>() {
+        Task<ResultadosFinales> task = new Task<ResultadosFinales>() {
             @Override
-            protected Pair<Resultados, Double> call() throws Exception {
+            protected ResultadosFinales call() throws Exception {
                 Simulacion simulacion = ejecutorSimulacion.getSimulacion();
                 simulacion.getProgressProperty().addListener((obs, oldProgress, newProgress) ->
                         updateProgress((Long) newProgress, simulacion.getTiempoTotal())
@@ -163,7 +172,8 @@ public class IntefazGraficaController implements Initializable {
         };
 
         // Callback final de ejecucion
-        task.valueProperty().addListener((obs, oldvalue, newValue) -> {
+        task.valueProperty().addListener((obs, oldvalue, resultadosFinales) -> {
+            // Duerme el hilo, para porder observar los datos de la ultima ejecuccion
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
@@ -171,7 +181,10 @@ public class IntefazGraficaController implements Initializable {
             }
             resultadosLabel.setText("Resultados Finales");
             deshabilitacionControlesParamteros(false);
-            setResultadosEjecucion(newValue.getKey());
+            setResultadosEjecucion(resultadosFinales);
+            intervaloConfianzaPane.setVisible(true);
+            intevaloConfianzaLabel.setText(Long.toString(Math.round(resultadosFinales.interavaloConfianzaPiso)) + " ms - "
+            + Long.toString(Math.round(resultadosFinales.getInteravaloConfianzaTecho)) + " ms");
         });
 
         Thread thread = new Thread(task);

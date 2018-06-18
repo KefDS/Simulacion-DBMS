@@ -198,7 +198,7 @@
                         </Label>
                         <GridPane hgap="8.0" vgap="3.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="75.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
@@ -237,7 +237,7 @@
                         </Label>
                         <GridPane hgap="8.0" vgap="3.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="75.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                            </columnConstraints>
                            <rowConstraints>
@@ -276,7 +276,7 @@
                         </Label>
                         <GridPane hgap="8.0" vgap="3.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="75.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                            </columnConstraints>
                            <rowConstraints>
@@ -315,7 +315,7 @@
                         </Label>
                         <GridPane hgap="8.0" vgap="3.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="75.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                            </columnConstraints>
                            <rowConstraints>
@@ -383,9 +383,33 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Label>
-                        <GridPane hgap="8.0" prefHeight="158.0" prefWidth="354.0">
+                        <GridPane fx:id="intervaloConfianzaPane">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Intervalo de confianza (95%)">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="intevaloConfianzaLabel" text="0" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="25.0" right="25.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <GridPane hgap="8.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="75.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
@@ -403,7 +427,7 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
-                              <Label text="Conexiones completadas" GridPane.rowIndex="1">
+                              <Label text="Conexiones Completadas" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
@@ -411,7 +435,7 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
-                              <Label text="Conexiones descartadas" GridPane.rowIndex="2">
+                              <Label text="Conexiones Descartadas" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
@@ -442,7 +466,7 @@
                         </Label>
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="75.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>

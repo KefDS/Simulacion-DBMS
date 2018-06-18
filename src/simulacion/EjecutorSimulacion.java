@@ -11,6 +11,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import simulacion.estadisticas.ResultadosFinales;
+
 public class EjecutorSimulacion implements Observable {
     private final Simulacion simulacion;
     private List<Resultados> resultados;
@@ -35,7 +39,7 @@ public class EjecutorSimulacion implements Observable {
         return simulacion;
     }
 
-    public Pair<Resultados, Double> realizarEjecucciones() {
+    public ResultadosFinales realizarEjecucciones() {
         for (int i = 0; i < veces; i++) {
             ultimosResultados = simulacion.realizarSimulacion();
 
@@ -43,8 +47,7 @@ public class EjecutorSimulacion implements Observable {
             numeroEjecuccion = i + 1;
             observersQueue.forEach(observer -> observer.notify(this));
         }
-        // TODO: Intervalo de confianza
-        return new Pair<>(getPromediosTodasEjecuciones(), 2.0);
+        return new ResultadosFinales(getPromediosTodasEjecuciones(), getIntervaloConfianzaTiempoVidaConexion());
     }
 
     public Resultados getUltimosResultados() {
@@ -55,9 +58,16 @@ public class EjecutorSimulacion implements Observable {
         return numeroEjecuccion;
     }
 
-    public double getIntervaloConfianzaTiempoVidaConexion() {
-        // TODO
-        return 0;
+    public Pair<Double, Double> getIntervaloConfianzaTiempoVidaConexion() {
+        SummaryStatistics estadistica = new SummaryStatistics();
+        resultados.forEach(resultado -> estadistica.addValue(resultado.tiempoPromedioVidaConexion));
+
+        TDistribution tDist = new TDistribution(estadistica.getN() - 1);
+        // Valor en tabla t
+        double critVal = tDist.inverseCumulativeProbability(1.0 - (1 - 0.95) / 2);
+
+        double intervaloConfianza = critVal * estadistica.getStandardDeviation() / Math.sqrt(estadistica.getN());
+        return new Pair<>(estadistica.getMean() - intervaloConfianza, estadistica.getMean() + intervaloConfianza);
     }
 
     public Resultados getPromediosTodasEjecuciones() {
@@ -88,21 +98,10 @@ public class EjecutorSimulacion implements Observable {
                     }));
         }
 
-        promedioPromediosVidaConexion /= resultados.size(); // Media de tiempo promedio vida conexion
+        promedioPromediosVidaConexion /= resultados.size();
         numeroConexionesDescartadas /= resultados.size();
         numeroConexionesCompletadas /= resultados.size();
         numeroConexionesExpiradas /= resultados.size();
-
-        // Desviacion estandar
-        double diferenciasAlCuadrado = 0.0;
-        for (Resultados resultado : resultados) {
-            diferenciasAlCuadrado += Math.pow(resultado.tiempoPromedioVidaConexion - promedioPromediosVidaConexion, 2);
-        }
-        final double desviacionEstandar = Math.sqrt(diferenciasAlCuadrado / resultados.size());
-
-        final double nivelConfianza = 1.96;
-
-
 
         tamanoPromColaAcm.forEach((k, v) -> tamanoPromColaAcm.put(k, v / resultados.size()));
         tiempoPromedioAcm.forEach((modulo, map) -> map.forEach((consulta, map2) -> map.put(consulta, map2 / resultados.size())));
