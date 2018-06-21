@@ -74,8 +74,8 @@ public class EjecutorSimulacion implements Observable {
     }
 
     public Resultados getPromediosTodasEjecuciones() {
-        Map<TipoModulo, Integer> tamanoPromColaAcm = Arrays.stream(TipoModulo.values())
-                .collect(Collectors.toMap(Function.identity(), k -> 0));
+        Map<TipoModulo, Double> tamanoPromColaAcm = Arrays.stream(TipoModulo.values())
+                .collect(Collectors.toMap(Function.identity(), k -> 0.0));
 
         Map<TipoModulo, Map<TipoConsulta, Double>> tiempoPromedioAcm = new EnumMap<>(TipoModulo.class);
         Arrays.stream(TipoModulo.values()).forEach(modulo -> tiempoPromedioAcm.put(modulo, Arrays.stream(TipoConsulta.values())

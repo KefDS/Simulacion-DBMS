@@ -22,7 +22,9 @@ import simulacion.estadisticas.DatosParciales;
 import simulacion.estadisticas.Resultados;
 import simulacion.estadisticas.ResultadosFinales;
 
+import java.math.RoundingMode;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -202,10 +204,12 @@ public class IntefazGraficaController implements Initializable {
         conxDescartadas.setText(Integer.toString(resultados.numeroConexionesDescartadas));
         conxExpiradas.setText(Integer.toString(resultados.numeroConexionesExpiradas));
 
-        tamColaProcesos.setText(Integer.toString(resultados.tamanoPromedioCola.get(TipoModulo.PROCESOS)));
-        tamColaProcesamiento.setText(Integer.toString(resultados.tamanoPromedioCola.get(TipoModulo.PROCESAMINETO)));
-        tamColaTransaccion.setText(Integer.toString(resultados.tamanoPromedioCola.get(TipoModulo.TRANSACCION)));
-        tamColaEjecuccion.setText(Integer.toString(resultados.tamanoPromedioCola.get(TipoModulo.EJECUCCION)));
+        DecimalFormat df = new DecimalFormat("#.###");
+        df.setRoundingMode(RoundingMode.CEILING);
+        tamColaProcesos.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.PROCESOS)));
+        tamColaProcesamiento.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.PROCESAMINETO)));
+        tamColaTransaccion.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.TRANSACCION)));
+        tamColaEjecuccion.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.EJECUCCION)));
 
         Map<TipoModulo, Map<TipoConsulta, Double>> tiempoPromedioPorTipoConsultas = resultados.tiempoPromedioPorTipoConsultas;
 

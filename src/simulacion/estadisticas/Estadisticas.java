@@ -51,11 +51,10 @@ public class Estadisticas {
     }
 
     public Resultados obtenerResultados(Map<TipoModulo, EstadisticasModulo> estadisticasModulos) {
-        // TODO: Tamano promedio en cola se debe dar en numero entero?
-        Map<TipoModulo, Integer> tamanoPromedioCola = estadisticasModulos.entrySet().stream()
+        Map<TipoModulo, Double> tamanoPromedioCola = estadisticasModulos.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> (int) Math.ceil(entry.getValue().sacarTiempoPromedioCola() * lambda)
+                        entry -> entry.getValue().sacarTiempoPromedioCola() * lambda
                 ));
 
         Map<TipoModulo, Map<TipoConsulta, Double>> tiempoPromedioConsultaPorModulo = new EnumMap<>(TipoModulo.class);
