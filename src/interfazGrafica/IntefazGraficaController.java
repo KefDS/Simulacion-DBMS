@@ -204,8 +204,8 @@ public class IntefazGraficaController implements Initializable {
         conxDescartadas.setText(Integer.toString(resultados.numeroConexionesDescartadas));
         conxExpiradas.setText(Integer.toString(resultados.numeroConexionesExpiradas));
 
-        DecimalFormat df = new DecimalFormat("#.###");
-        df.setRoundingMode(RoundingMode.CEILING);
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.HALF_UP);
         tamColaProcesos.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.PROCESOS)));
         tamColaProcesamiento.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.PROCESAMINETO)));
         tamColaTransaccion.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.TRANSACCION)));
