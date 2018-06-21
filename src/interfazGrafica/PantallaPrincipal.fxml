@@ -19,7 +19,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="interfazGrafica.IntefazGraficaController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="interfazGrafica.IntefazGraficaController">
     <children>
         <SplitPane dividerPositions="0.3, 0.65" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
             <items>
@@ -51,22 +51,22 @@
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <children>
-                                        <Label text="Numero de ejecuciones">
+                                        <Label text="Número de Ejecuciones">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
                                         <Spinner fx:id="numeroEjecucciones" editable="true" GridPane.columnIndex="1" GridPane.halignment="LEFT" />
-                                        <Label text="Duracion simulación" GridPane.rowIndex="1">
+                                        <Label text="Duración Simulación" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
                                         <Spinner fx:id="duracionSegSpinner" editable="true" prefHeight="25.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                        <Label text="Conexiones máximas" GridPane.rowIndex="3">
+                                        <Label text="Conexiones Máximas" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
                                         <Spinner fx:id="conexionesMaximasSpinner" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                        <Label text="Módulo Procesamiento consultas" GridPane.rowIndex="4">
+                                        <Label text="Módulo Procesamiento Consultas" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
@@ -76,7 +76,7 @@
                                     <Font size="14.0" />
                                  </font></Label>
                                         <Spinner fx:id="servidoresTransaccionesSpinner" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                        <Label text="Módulo Ejecucción" GridPane.rowIndex="6">
+                                        <Label text="Módulo Ejecución" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
@@ -120,7 +120,7 @@
                               <Insets bottom="15.0" />
                            </VBox.margin>
                         </Label>
-                        <Label text="Información general" textFill="#9f9f9f">
+                        <Label text="Información General" textFill="#9f9f9f">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
@@ -173,7 +173,7 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
-                              <Label text="Conexiones activas" GridPane.rowIndex="4">
+                              <Label text="Conexiones Activas" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -188,7 +188,7 @@
                               <Insets bottom="20.0" left="15.0" right="15.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label text="Módulo Admnistracion de procesos" textFill="#9f9f9f">
+                        <Label text="Módulo Administración de Procesos" textFill="#9f9f9f">
                            <VBox.margin>
                               <Insets bottom="3.0" />
                            </VBox.margin>
@@ -206,11 +206,11 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Tamaño de la cola" GridPane.rowIndex="1">
+                              <Label text="Tamaño de la Cola" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="15.0" />
                                  </font></Label>
-                              <Label text="Consultas siendo atendidas">
+                              <Label text="Consultas Siendo Atendidas">
                                  <font>
                                     <Font size="15.0" />
                                  </font></Label>
@@ -245,11 +245,11 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Tamaño de la cola" GridPane.rowIndex="1">
+                              <Label text="Tamaño de la Cola" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="15.0" />
                                  </font></Label>
-                              <Label text="Consultas siendo atendidas">
+                              <Label text="Consultas Siendo Atendidas">
                                  <font>
                                     <Font size="15.0" />
                                  </font></Label>
@@ -284,11 +284,11 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Tamaño de la cola" GridPane.rowIndex="1">
+                              <Label text="Tamaño de la Cola" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="15.0" />
                                  </font></Label>
-                              <Label text="Consultas siendo atendidas">
+                              <Label text="Consultas Siendo Atendidas">
                                  <font>
                                     <Font size="15.0" />
                                  </font></Label>
@@ -305,7 +305,7 @@
                               <Insets bottom="18.0" left="15.0" right="15.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label text="Módulo Ejecuccion" textFill="#9f9f9f">
+                        <Label text="Módulo Ejecución" textFill="#9f9f9f">
                            <VBox.margin>
                               <Insets bottom="3.0" />
                            </VBox.margin>
@@ -323,11 +323,11 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Tamaño de la cola" GridPane.rowIndex="1">
+                              <Label text="Tamaño de la Cola" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="15.0" />
                                  </font></Label>
-                              <Label text="Consultas siendo atendidas">
+                              <Label text="Consultas Siendo Atendidas">
                                  <font>
                                     <Font size="15.0" />
                                  </font></Label>
@@ -344,7 +344,7 @@
                               <Insets bottom="18.0" left="15.0" right="15.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label text="Progreso de la simulación actual" textAlignment="CENTER" textFill="#9f9f9f">
+                        <Label text="Progreso de la Simulación Actual" textAlignment="CENTER" textFill="#9f9f9f">
                            <font>
                               <Font name="System Bold" size="16.0" />
                            </font>
@@ -375,7 +375,7 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label text="Información general" textFill="#9f9f9f">
+                        <Label text="Información General" textFill="#9f9f9f">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
@@ -419,7 +419,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label alignment="TOP_LEFT" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefWidth="173.0" text="Promedio de vida de una conexion" wrapText="true">
+                              <Label alignment="TOP_LEFT" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefWidth="173.0" text="Promedio de Vida de una Conexión" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
@@ -456,7 +456,7 @@
                               <Insets bottom="2.0" left="25.0" right="25.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label maxWidth="1.7976931348623157E308" text="Tamano promedio de la cola" textFill="#9f9f9f">
+                        <Label maxWidth="1.7976931348623157E308" text="Tamaño Promedio de la Cola" textFill="#9f9f9f">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
@@ -500,7 +500,7 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
-                              <Label text="Ejecucción" GridPane.rowIndex="3">
+                              <Label text="Ejecución" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
