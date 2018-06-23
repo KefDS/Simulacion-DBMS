@@ -15,6 +15,6 @@ public class PromedioTiempo {
     }
 
     public double getPromedio() {
-        return tiempo / conteo;
+        return conteo == 0 ? 0.0 : tiempo / conteo;
     }
 }

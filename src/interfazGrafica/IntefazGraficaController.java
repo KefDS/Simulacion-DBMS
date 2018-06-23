@@ -164,6 +164,7 @@ public class IntefazGraficaController implements Initializable {
         Task<ResultadosFinales> task = new Task<ResultadosFinales>() {
             @Override
             protected ResultadosFinales call() throws Exception {
+                // Progress bar
                 Simulacion simulacion = ejecutorSimulacion.getSimulacion();
                 simulacion.getProgressProperty().addListener((obs, oldProgress, newProgress) ->
                         updateProgress((Long) newProgress, simulacion.getTiempoTotal())
@@ -172,14 +173,15 @@ public class IntefazGraficaController implements Initializable {
             }
         };
 
-        // Callback final de ejecucion
+        // Callback final de todas las ejecuciones
         task.valueProperty().addListener((obs, oldvalue, resultadosFinales) -> {
             resultadosLabel.setText("Resultados Finales");
             deshabilitacionControlesParamteros(false);
             setResultadosEjecucion(resultadosFinales);
             intervaloConfianzaPane.setVisible(true);
-            intevaloConfianzaLabel.setText(Long.toString(Math.round(resultadosFinales.interavaloConfianzaPiso)) + " ms - "
-            + Long.toString(Math.round(resultadosFinales.getInteravaloConfianzaTecho)) + " ms");
+            intevaloConfianzaLabel.setText(
+                    Long.toString(Math.round(resultadosFinales.interavaloConfianzaPiso)) + " ms - "
+                            + Long.toString(Math.round(resultadosFinales.getInteravaloConfianzaTecho)) + " ms");
         });
 
         Thread thread = new Thread(task);
@@ -198,18 +200,38 @@ public class IntefazGraficaController implements Initializable {
         };
     }
 
+
+
+    private void setDatosParciales(DatosParciales datos) {
+        relojLabel.setText(Long.toString(Math.round(datos.reloj)) + " ms");
+        conxCompletadasEje.setText(Integer.toString(datos.numeroConexionesCompletadas));
+        conxDescartadasEje.setText(Integer.toString(datos.numeroConexionesDescartadas));
+        conxExpiradasEje.setText(Integer.toString(datos.numeroConexionesExpiradas));
+        conxActivas.setText(Integer.toString(datos.infoModulo.get(TipoModulo.CLIENTES).getKey()));
+
+        procesosNumServ.setText(Integer.toString(datos.infoModulo.get(TipoModulo.PROCESOS).getKey()));
+        procesosCola.setText(Integer.toString(datos.infoModulo.get(TipoModulo.PROCESOS).getValue()));
+
+        procesamientoNumServ.setText(Integer.toString(datos.infoModulo.get(TipoModulo.PROCESAMINETO).getKey()));
+        procesamientoCola.setText(Integer.toString(datos.infoModulo.get(TipoModulo.PROCESAMINETO).getValue()));
+
+        transaccionNumServ.setText(Integer.toString(datos.infoModulo.get(TipoModulo.TRANSACCION).getKey()));
+        transaccionCola.setText(Integer.toString(datos.infoModulo.get(TipoModulo.TRANSACCION).getValue()));
+
+        ejecuccionNumServ.setText(Integer.toString(datos.infoModulo.get(TipoModulo.EJECUCCION).getKey()));
+        ejecuccionCola.setText(Integer.toString(datos.infoModulo.get(TipoModulo.EJECUCCION).getValue()));
+    }
+
     private void setResultadosEjecucion(Resultados resultados) {
         promVidaConex.setText(Long.toString(Math.round(resultados.tiempoPromedioVidaConexion)) + " ms");
         conxCompletadas.setText(Integer.toString(resultados.numeroConexionesCompletadas));
         conxDescartadas.setText(Integer.toString(resultados.numeroConexionesDescartadas));
         conxExpiradas.setText(Integer.toString(resultados.numeroConexionesExpiradas));
 
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.HALF_UP);
-        tamColaProcesos.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.PROCESOS)));
-        tamColaProcesamiento.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.PROCESAMINETO)));
-        tamColaTransaccion.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.TRANSACCION)));
-        tamColaEjecuccion.setText(df.format(resultados.tamanoPromedioCola.get(TipoModulo.EJECUCCION)));
+        setLabelValue(tamColaProcesos, resultados.tamanoPromedioCola.get(TipoModulo.PROCESOS));
+        setLabelValue(tamColaProcesamiento, resultados.tamanoPromedioCola.get(TipoModulo.PROCESAMINETO));
+        setLabelValue(tamColaTransaccion, resultados.tamanoPromedioCola.get(TipoModulo.TRANSACCION));
+        setLabelValue(tamColaEjecuccion, resultados.tamanoPromedioCola.get(TipoModulo.EJECUCCION));
 
         Map<TipoModulo, Map<TipoConsulta, Double>> tiempoPromedioPorTipoConsultas = resultados.tiempoPromedioPorTipoConsultas;
 
@@ -244,26 +266,6 @@ public class IntefazGraficaController implements Initializable {
         });
     }
 
-    private void setDatosParciales(DatosParciales datos) {
-        relojLabel.setText(Long.toString(Math.round(datos.reloj)) + " ms");
-        conxCompletadasEje.setText(Integer.toString(datos.numeroConexionesCompletadas));
-        conxDescartadasEje.setText(Integer.toString(datos.numeroConexionesDescartadas));
-        conxExpiradasEje.setText(Integer.toString(datos.numeroConexionesExpiradas));
-        conxActivas.setText(Integer.toString(datos.infoModulo.get(TipoModulo.CLIENTES).getKey()));
-
-        procesosNumServ.setText(Integer.toString(datos.infoModulo.get(TipoModulo.PROCESOS).getKey()));
-        procesosCola.setText(Integer.toString(datos.infoModulo.get(TipoModulo.PROCESOS).getValue()));
-
-        procesamientoNumServ.setText(Integer.toString(datos.infoModulo.get(TipoModulo.PROCESAMINETO).getKey()));
-        procesamientoCola.setText(Integer.toString(datos.infoModulo.get(TipoModulo.PROCESAMINETO).getValue()));
-
-        transaccionNumServ.setText(Integer.toString(datos.infoModulo.get(TipoModulo.TRANSACCION).getKey()));
-        transaccionCola.setText(Integer.toString(datos.infoModulo.get(TipoModulo.TRANSACCION).getValue()));
-
-        ejecuccionNumServ.setText(Integer.toString(datos.infoModulo.get(TipoModulo.EJECUCCION).getKey()));
-        ejecuccionCola.setText(Integer.toString(datos.infoModulo.get(TipoModulo.EJECUCCION).getValue()));
-    }
-
     private Observer observadorFinalCadaTick() {
         return simulacion -> {
             DatosParciales datos = ((Simulacion) simulacion).getResultadosParcialesMasRecientes();
@@ -290,9 +292,17 @@ public class IntefazGraficaController implements Initializable {
         );
     }
 
+    private void setLabelValue(Label lb, double value) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        lb.setText(df.format(value));
+    }
+
     private void deshabilitacionControlesParamteros(final boolean estado) {
         empezarSimulacionButton.setText(estado ? "Corriendo Simulacion..." : "Empezar Simulacion");
         empezarSimulacionButton.setDisable(estado);
         listaSpinners.forEach(item -> item.setDisable(estado));
+        modoLentoCheckbox.setDisable(estado);
     }
 }

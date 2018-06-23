@@ -15,7 +15,7 @@ public class Estadisticas {
     private int numeroConexionesCompletadas;
 
     public Estadisticas() {
-        lambda = 0.0005;
+        lambda = 0.0005; // 30 conx por minuto -> 0.0005 conx por milisegundo
         promedioVidaConexion = new PromedioTiempo();
         numeroConexionesDescartadas = 0;
         numeroConexionesExpiradas = 0;
@@ -54,8 +54,7 @@ public class Estadisticas {
         Map<TipoModulo, Double> tamanoPromedioCola = estadisticasModulos.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> entry.getValue().sacarTiempoPromedioCola() * lambda
-                ));
+                        entry -> entry.getValue().sacarTiempoPromedioCola() * lambda));
 
         Map<TipoModulo, Map<TipoConsulta, Double>> tiempoPromedioConsultaPorModulo = new EnumMap<>(TipoModulo.class);
         Arrays.stream(TipoModulo.values()).forEach(tipo ->
