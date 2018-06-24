@@ -121,6 +121,9 @@ public class IntefazGraficaController implements Initializable {
     private List<Spinner<Integer>> listaSpinners;
     private Map<TipoConsulta, AnchorPane> asociaConsultaTab;
 
+    private DecimalFormat doubleFormater2Decimales;
+    private DecimalFormat doubleFormater3Decimales;
+
     // Bandera para no sobrecargar envio de datos al hilo del GUI
     private final AtomicInteger count = new AtomicInteger(-1);
 
@@ -147,6 +150,12 @@ public class IntefazGraficaController implements Initializable {
         servidoresProcesamientoSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 2));
 
         listaSpinners.forEach(IntegerStringConverter::createFor);
+
+        doubleFormater2Decimales = new DecimalFormat("#.##");
+        doubleFormater2Decimales.setRoundingMode(RoundingMode.HALF_UP);
+
+        doubleFormater3Decimales = new DecimalFormat("#.###");
+        doubleFormater3Decimales.setRoundingMode(RoundingMode.HALF_UP);
     }
 
     public void handleEmpezarSimulacion(ActionEvent actionEvent) {
@@ -180,8 +189,8 @@ public class IntefazGraficaController implements Initializable {
             setResultadosEjecucion(resultadosFinales);
             intervaloConfianzaPane.setVisible(true);
             intevaloConfianzaLabel.setText(
-                    Long.toString(Math.round(resultadosFinales.interavaloConfianzaPiso)) + " ms - "
-                            + Long.toString(Math.round(resultadosFinales.getInteravaloConfianzaTecho)) + " ms");
+                    doubleFormater3Decimales.format(resultadosFinales.interavaloConfianzaPiso) + " ms - "
+                            + doubleFormater3Decimales.format(resultadosFinales.getInteravaloConfianzaTecho) + " ms");
         });
 
         Thread thread = new Thread(task);
@@ -203,7 +212,8 @@ public class IntefazGraficaController implements Initializable {
 
 
     private void setDatosParciales(DatosParciales datos) {
-        relojLabel.setText(Long.toString(Math.round(datos.reloj)) + " ms");
+        relojLabel.setText(doubleFormater3Decimales.format(datos.reloj) + " ms");
+
         conxCompletadasEje.setText(Integer.toString(datos.numeroConexionesCompletadas));
         conxDescartadasEje.setText(Integer.toString(datos.numeroConexionesDescartadas));
         conxExpiradasEje.setText(Integer.toString(datos.numeroConexionesExpiradas));
@@ -223,7 +233,7 @@ public class IntefazGraficaController implements Initializable {
     }
 
     private void setResultadosEjecucion(Resultados resultados) {
-        promVidaConex.setText(Long.toString(Math.round(resultados.tiempoPromedioVidaConexion)) + " ms");
+        promVidaConex.setText( doubleFormater3Decimales.format(resultados.tiempoPromedioVidaConexion) + " ms");
         conxCompletadas.setText(Integer.toString(resultados.numeroConexionesCompletadas));
         conxDescartadas.setText(Integer.toString(resultados.numeroConexionesDescartadas));
         conxExpiradas.setText(Integer.toString(resultados.numeroConexionesExpiradas));
@@ -293,10 +303,7 @@ public class IntefazGraficaController implements Initializable {
     }
 
     private void setLabelValue(Label lb, double value) {
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.CEILING);
-
-        lb.setText(df.format(value));
+        lb.setText(doubleFormater2Decimales.format(value));
     }
 
     private void deshabilitacionControlesParamteros(final boolean estado) {
