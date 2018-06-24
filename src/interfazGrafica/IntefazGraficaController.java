@@ -203,7 +203,7 @@ public class IntefazGraficaController implements Initializable {
             Resultados resultados = ((EjecutorSimulacion) ejecuccionSimulacion).getUltimosResultados();
 
             Platform.runLater(() -> {
-                resultadosLabel.setText("Resultados de Ejecucción Número " + ((EjecutorSimulacion) ejecuccionSimulacion).getNumeroEjecuccion());
+                resultadosLabel.setText("Resultados de Ejecución Número " + ((EjecutorSimulacion) ejecuccionSimulacion).getNumeroEjecuccion());
                 setResultadosEjecucion(resultados);
             });
         };
@@ -307,7 +307,7 @@ public class IntefazGraficaController implements Initializable {
     }
 
     private void deshabilitacionControlesParamteros(final boolean estado) {
-        empezarSimulacionButton.setText(estado ? "Corriendo Simulacion..." : "Empezar Simulacion");
+        empezarSimulacionButton.setText(estado ? "Corriendo Simulación..." : "Empezar Simulación");
         empezarSimulacionButton.setDisable(estado);
         listaSpinners.forEach(item -> item.setDisable(estado));
         modoLentoCheckbox.setDisable(estado);

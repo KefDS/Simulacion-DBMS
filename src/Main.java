@@ -9,7 +9,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("interfazGrafica/PantallaPrincipal.fxml"));
-        primaryStage.setTitle("Simulacion PintoDB");
+        primaryStage.setTitle("Simulación PintoDB");
         primaryStage.setScene(new Scene(root, 1280, 800));
         primaryStage.show();
     }
