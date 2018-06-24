@@ -1,11 +1,11 @@
 package dominio.enumeraciones;
 
 public enum TipoModulo {
-    CLIENTES("Cleintes"),
+    CLIENTES("Clientes"),
     PROCESOS("Procesos"),
     PROCESAMINETO("Procesam..."),
-    TRANSACCION("Transaccion"),
-    EJECUCCION("Ejecuccion");
+    TRANSACCION("Transacción"),
+    EJECUCCION("Ejecución");
 
     private String name;
 

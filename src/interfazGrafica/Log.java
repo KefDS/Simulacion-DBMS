@@ -35,7 +35,7 @@ public class Log {
                     "Reloj: " + datosParciales.reloj + "\n" +
                             "Conexiones Completadas: " + datosParciales.numeroConexionesCompletadas + "\n" +
                             "Conexiones Descartadas: " + datosParciales.numeroConexionesDescartadas + "\n" +
-                            "Conexiones Expiradas" + datosParciales.numeroConexionesExpiradas + "\n\n";
+                            "Conexiones Expiradas: " + datosParciales.numeroConexionesExpiradas + "\n\n";
 
             try {
                 Files.write(path, datosParcialesFormato.getBytes(), StandardOpenOption.APPEND);
@@ -50,7 +50,8 @@ public class Log {
                     "Conexiones Completadas: " + resultados.numeroConexionesCompletadas + "\n" +
                             "Conexiones Descartadas: " + resultados.numeroConexionesDescartadas + "\n" +
                             "Conexiones Expiradas: " + resultados.numeroConexionesExpiradas + "\n" +
-                            "Promedio de Vida Conexión: " + resultados.tiempoPromedioVidaConexion + "ms" + "\n";
+                            "Promedio de Vida Conexión: " + resultados.tiempoPromedioVidaConexion + "ms" + "\n" +
+                            "Resultados por Módulo: " + "\n" + resultados.tiempoPromedioPorTipoConsultas + "\n\n";
 
             try {
                 Files.write(path, resultadosFinalesFormato.getBytes(), StandardOpenOption.APPEND);

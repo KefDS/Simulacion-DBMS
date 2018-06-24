@@ -568,7 +568,7 @@
         </SplitPane>
         <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="SImulacion PintoDB" HBox.hgrow="ALWAYS">
+                <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Simulación PintoDB" HBox.hgrow="ALWAYS">
                     <font>
                         <Font size="11.0" fx:id="x3" />
                     </font>
