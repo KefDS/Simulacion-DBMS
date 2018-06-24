@@ -4,6 +4,8 @@ import dominio.enumeraciones.TipoConsulta;
 import dominio.enumeraciones.TipoModulo;
 import interfazGrafica.bibliotecas.IntegerStringConverter;
 import interfazGrafica.interfaces.Observer;
+import interfazGrafica.observadores.LogFinalEjecucion;
+import interfazGrafica.observadores.LogFinalTick;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -127,6 +129,8 @@ public class IntefazGraficaController implements Initializable {
     // Bandera para no sobrecargar envio de datos al hilo del GUI
     private final AtomicInteger count = new AtomicInteger(-1);
 
+    private Log log;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         listaSpinners = Arrays.asList(numeroEjecucciones, duracionSegSpinner, timeoutSpinner,
@@ -156,6 +160,8 @@ public class IntefazGraficaController implements Initializable {
 
         doubleFormater3Decimales = new DecimalFormat("#.###");
         doubleFormater3Decimales.setRoundingMode(RoundingMode.HALF_UP);
+
+        log = new Log();
     }
 
     public void handleEmpezarSimulacion(ActionEvent actionEvent) {
@@ -166,9 +172,12 @@ public class IntefazGraficaController implements Initializable {
 
         // Observador final cada ejecuccion de simulacion
         ejecutorSimulacion.addObserver(observadorFinalCadaEjecuccion());
+        ejecutorSimulacion.addObserver(new LogFinalEjecucion(log));
 
         // Observador cada final de reloj
         ejecutorSimulacion.getSimulacion().addObserver(observadorFinalCadaTick());
+        ejecutorSimulacion.getSimulacion().addObserver(new LogFinalTick(log));
+
 
         Task<ResultadosFinales> task = new Task<ResultadosFinales>() {
             @Override
@@ -210,7 +219,6 @@ public class IntefazGraficaController implements Initializable {
     }
 
 
-
     private void setDatosParciales(DatosParciales datos) {
         relojLabel.setText(doubleFormater3Decimales.format(datos.reloj) + " ms");
 
@@ -233,7 +241,7 @@ public class IntefazGraficaController implements Initializable {
     }
 
     private void setResultadosEjecucion(Resultados resultados) {
-        promVidaConex.setText( doubleFormater3Decimales.format(resultados.tiempoPromedioVidaConexion) + " ms");
+        promVidaConex.setText(doubleFormater3Decimales.format(resultados.tiempoPromedioVidaConexion) + " ms");
         conxCompletadas.setText(Integer.toString(resultados.numeroConexionesCompletadas));
         conxDescartadas.setText(Integer.toString(resultados.numeroConexionesDescartadas));
         conxExpiradas.setText(Integer.toString(resultados.numeroConexionesExpiradas));

@@ -1,53 +1,61 @@
 package interfazGrafica;
 
 import simulacion.estadisticas.DatosParciales;
+import simulacion.estadisticas.Resultados;
 import simulacion.estadisticas.ResultadosFinales;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Log {
-    private static String rutaArchivo = "/logSimulacion.txt";
+    private Path path;
+    private boolean archivoCreado;
 
     Log() {
-        Path path = Paths.get(rutaArchivo);
-        // TODO: Abrir archivo
+        path = Paths.get("logPintoDB.txt");
+        try {
+            Files.write(path, "".getBytes());
+            archivoCreado = true;
+        } catch (IOException e) {
+            System.out.println("No se pudo crear el archivo");
+            archivoCreado = false;
+        }
     }
 
     public void escribirDatosParciales(DatosParciales datosParciales) {
-       Path path = Paths.get(rutaArchivo);
+        if (archivoCreado) {
+            String datosParcialesFormato =
+                    "Reloj: " + datosParciales.reloj + "\n" +
+                            "Conexiones Completadas: " + datosParciales.numeroConexionesCompletadas + "\n" +
+                            "Conexiones Descartadas: " + datosParciales.numeroConexionesDescartadas + "\n" +
+                            "Conexiones Expiradas" + datosParciales.numeroConexionesExpiradas + "\n\n";
 
-       String datosParcialesFormato =
-               "Reloj: " + datosParciales.reloj + "\n" +
-               "Conexiones Completadas: " + datosParciales.numeroConexionesCompletadas + "\n" +
-               "Conexiones Descartadas: " + datosParciales.numeroConexionesDescartadas + "\n" +
-               "Conexiones Expiradas" + datosParciales.numeroConexionesExpiradas + "\n";
-
-        try {
-            Files.write(path, datosParcialesFormato.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void escribirResultadosFinales(ResultadosFinales resultadosFinales) throws IOException {
-        Path path = Paths.get(rutaArchivo);
-
-        String resultadosFinalesFormato =
-                "Conexiones Completadas: " + resultadosFinales.numeroConexionesCompletadas + "\n" +
-                "Conexiones Descartadas: " + resultadosFinales.numeroConexionesDescartadas + "\n" +
-                "Conexiones Expiradas: " + resultadosFinales.numeroConexionesExpiradas + "\n" +
-                "Promedio de Vida Conexión: " + resultadosFinales.tiempoPromedioVidaConexion + "ms" + "\n";
-
-        try {
-        Files.write(path, resultadosFinalesFormato.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                Files.write(path, datosParcialesFormato.getBytes(), StandardOpenOption.APPEND);
+            } catch (IOException ignored) {
+            }
         }
     }
 
-    public void cerrarArchivo() {
-        // TODO
+    public void escribirResultadosFinales(Resultados resultados) {
+        if (archivoCreado) {
+            String resultadosFinalesFormato =
+                    "Conexiones Completadas: " + resultados.numeroConexionesCompletadas + "\n" +
+                            "Conexiones Descartadas: " + resultados.numeroConexionesDescartadas + "\n" +
+                            "Conexiones Expiradas: " + resultados.numeroConexionesExpiradas + "\n" +
+                            "Promedio de Vida Conexión: " + resultados.tiempoPromedioVidaConexion + "ms" + "\n";
+
+            try {
+                Files.write(path, resultadosFinalesFormato.getBytes(), StandardOpenOption.APPEND);
+            } catch (IOException ignored) {
+            }
+        }
     }
 }

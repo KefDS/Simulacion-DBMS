@@ -78,3 +78,5 @@ fabric.properties
 .idea/sonarlint
 
 lib/*
+
+logPintoDB.txt
